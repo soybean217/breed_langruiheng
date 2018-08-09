@@ -38,8 +38,8 @@ body {}
   text-align: center;
   font-size: 16px;
   color: #fff;
-  background-color: #0ca3e9;
-  border: 1px solid #0ca3e9;
+  background-color: #6ac33c;
+  border: 1px solid #6ac33c;
   border-radius: 15rpx;
 }
 
@@ -49,19 +49,21 @@ body {}
   padding: 5px 10px;
   color: black;
   border: 1px solid #000;
-  border-radius: 25rpx;
+  border-radius: 12rpx;
   box-shadow: 2px 2px 5px #000;
 }
 
 .formControl {
   display: block;
-  width: 80%;
+  width: 100%;
   padding: 5px 12px;
-  padding-left: 0;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #ccc;
-  border-radius: 5rpx;
+  padding-left: 40px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(174, 174, 174);
 }
 
 

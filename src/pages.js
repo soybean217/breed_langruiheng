@@ -11,7 +11,7 @@ module.exports = [{
 }, {
   path: '/pages/monitors/login',
   config: {
-    navigationBarTitleText: '登录'
+    navigationBarTitleText: '登  陆'
   }
 }, {
   path: '/pages/monitors/profile',

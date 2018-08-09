@@ -9,8 +9,8 @@
 	},
 	"miniprogramRoot": "./dist/",
 	"compileType": "miniprogram",
-	"appid": "wxbb8e61c5cdaaf8ba",
-	"projectname": "breed_a",
+	"appid": "wx34a42e9927ad6b4e",
+	"projectname": "breed_langruiheng",
 	"condition": {
 		"search": {
 			"current": -1,

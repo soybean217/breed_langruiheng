@@ -1,11 +1,33 @@
 <template>
   <div class="container">
-    <div class="title"><img src="/static/images/a/logo.png" /></div>
-    <div class="title">温氏环控小管家</div>
-    <input type="text" class="formControl" v-model="username" placeholder="用户名" />
-    <input type="password" class="formControl" v-model="password" placeholder="密码" />
+    <div class="title"><img src="/static/images/lrh_a/logo.jpg" /></div>
+    <div class="titleText">小猪微助手</div>
+    <div class="inputDiv">
+      <div class="inputLeftImg">
+        <img src="/static/images/lrh_a/people_blue.png">
+      </div>
+      <div class="inputArea">
+        <input type="text" class="formControl" v-model="username" placeholder="输入用户名" />
+      </div>
+    </div>
+    <div class="inputDiv">
+      <div class="inputLeftImg">
+        <img src="/static/images/lrh_a/lock_blue.png">
+      </div>
+      <div class="inputArea">
+        <input type="password" class="formControl" v-model="password" placeholder="输入密码" />
+      </div>
+    </div>
+    <div class="inputDiv">
+      <div class="inputLeftImg">
+        <img src="/static/images/lrh_a/computer_blue.png">
+      </div>
+      <div class="inputArea">
+        <input type="text" class="formControl" v-model="server" placeholder="输入服务器域名" />
+      </div>
+    </div>
     <div class="empty"></div>
-    <span @click="login" class="bigBtn">登录</span>
+    <span @click="login" class="bigBtn">登  陆</span>
     <br>
     <div class="modifyLink">
       <!-- <a href='/pages/monitors/serverEdit'>修改服务器地址</a> -->
@@ -26,6 +48,7 @@ export default {
     return {
       username: '',
       password: '',
+      server: wx.getStorageSync('SERVER_HOST'),
     }
   },
 
@@ -60,8 +83,11 @@ export default {
     },
     async login() {
       // let data = await userLogin({ userName: this.username, password:this.password, count: 3 })
-      var app = this
-      let data = await userLogin({ userName: app.username, password: app.password })
+      if (this.server != wx.getStorageSync('SERVER_HOST')) {
+        wx.setStorageSync('SERVER_HOST', this.server)
+        request.initConfig()
+      }
+      let data = await userLogin({ userName: this.username, password: this.password })
       // let data = await userLogin()
       if (data.Result.ReturnFlag._text == '0' && data.Result.ReturnMsg._text == "success") {
         wx.reLaunch({
@@ -95,6 +121,33 @@ export default {
   box-sizing: border-box;
 }
 
+.inputDiv {
+  display: block;
+  width: 80%;
+  padding: 5px 12px;
+  padding-left: 0;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+  border-radius: 5rpx;
+}
+
+.inputArea {
+  float: left;
+}
+
+
+.inputLeftImg {
+  padding-top: 6px;
+  padding-left: 4px;
+  float: left;
+}
+
+.inputLeftImg img {
+  width: 22px;
+  height: 22px;
+}
+
 .form-container {
   width: 80%;
 }
@@ -105,21 +158,27 @@ export default {
 }
 
 .title {
+  width: 100%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.titleText {
   padding-bottom: 24px;
   width: 100%;
   white-space: nowrap;
   text-align: center;
-  font-size: 28px;
+  color: rgb(51, 51, 51);
+  font-size: 36px;
   font-weight: 700;
   font-style: normal;
   text-decoration: none;
-  font-family: 微软雅黑;
-  color: rgb(38, 49, 54);
+  font-family: 楷体;
 }
 
 .title img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
 }
 
 .modifyLink {

@@ -1,14 +1,23 @@
 <template>
   <div class="container">
-    <div class="indexTitleUser">
-      用户：{{username}}
-      <div class="userLogo"><i class="iconfont icon-yyyonghu2 iconStyleLogo"></i></div>
-    </div>
-    <div class="indexTitleStat">栏舍健康信息统计 </div>
-    <div class="wrapEcharts">
-      <div class="mainChart1">
+    <div class="r1">
+      <div class="r1Left">
         <div class="chartArea">健康情况分布</div>
         <mpvue-echarts :echarts="echarts" :onInit="onInit" canvasId="index-pie" />
+      </div>
+      <div class="r1Right">
+        <div class="statCell">
+          <div class="roomsTitle">
+            <div class="roomsTitleLeft">栏舍总数</div>
+            <div class="roomsTitleLeft">{{totalRoomCount}}</div>
+          </div>
+          <div class='rightLogo'><img src="/static/images/lrh_a/home_blue.png"></div>
+        </div>
+        <div class="statCell"></div>
+      </div>
+    </div>
+    <div class="wrapEcharts">
+      <div class="mainChart1">
       </div>
       <div class="mainChart2">
         <div class="statList"><span style="color:#53bd53">&#9635;</span> 正常：{{normalRoomCount}} 间</div>
@@ -89,7 +98,7 @@ function initChart(canvas, width, height) {
 
   option = {
     backgroundColor: '#84c1ff',
-    color: ['#f2f4f5', '#e62c33', '#52be52', '#f7d200', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
+    color: ['#67c337', '#f66c6c', '#91949a', '#f7d200', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
     series: [{
       label: {
         show: false,
@@ -102,7 +111,7 @@ function initChart(canvas, width, height) {
       },
       type: 'pie',
       center: ['50%', '45%'],
-      radius: ['50%', '70%'],
+      radius: ['0%', '70%'],
       data: [{
         value: 3,
         name: '正常',
@@ -206,54 +215,51 @@ export default {
       }
       // if (this.normalNumber > 0) {
       option.series[0].data = [{
-        value: 0,
-        name: '',
-      }, {
-        value: this.offlineRoomCount,
-        name: '',
-      }, {
         value: this.normalRoomCount,
         name: '',
       }, {
         value: this.alarmRoomCount,
         name: '',
-      }]
+      }, {
+        value: this.offlineRoomCount,
+        name: '',
+      }, ]
       option.series[0].hoverAnimation = false
       option.series[0].z = 1
       // option.series[0].legendHoverLink = false
-      option.series.push({
-        data: [{ value: 100 }],
-        radius: ['0%', '50%'],
-        type: "pie",
-        center: ['50%', '45%'],
-        label: {
-          show: false,
-          normal: {
-            fontSize: 14
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        hoverAnimation: false,
-        z: 10,
-      })
+      // option.series.push({
+      //   data: [{ value: 100 }],
+      //   radius: ['0%', '50%'],
+      //   type: "pie",
+      //   center: ['50%', '45%'],
+      //   label: {
+      //     show: false,
+      //     normal: {
+      //       fontSize: 14
+      //     }
+      //   },
+      //   labelLine: {
+      //     show: false
+      //   },
+      //   hoverAnimation: false,
+      //   z: 10,
+      // })
       // option.series[1] = 
-      option.title = {
-        text: this.normalRate,
-        // subtext: 'From ExcelHome',
-        // sublink: 'http://e.weibo.com/1341556070/AhQXtjbqh',
-        x: 'center',
-        y: '38%',
-        itemGap: 20,
-        textStyle: {
-          color: '#53bc53',
-          fontFamily: '微软雅黑',
-          fontSize: 14,
-          fontWeight: 'bolder'
-        },
-        z: 20,
-      }
+      // option.title = {
+      //   text: this.normalRate,
+      //   // subtext: 'From ExcelHome',
+      //   // sublink: 'http://e.weibo.com/1341556070/AhQXtjbqh',
+      //   x: 'center',
+      //   y: '38%',
+      //   itemGap: 20,
+      //   textStyle: {
+      //     color: '#53bc53',
+      //     fontFamily: '微软雅黑',
+      //     fontSize: 14,
+      //     fontWeight: 'bolder'
+      //   },
+      //   z: 20,
+      // }
       option.legend = {
         show: false
       }
@@ -308,24 +314,6 @@ export default {
   font-size: 20px;
   font-weight: bold;
   padding-bottom: 5px;
-}
-
-.indexTitleUser {
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  color: white;
-  padding: 15px 28px;
-  display: flex;
-  /*
-  flex-direction: column;
-  */
-  align-items: center;
-  justify-content: space-between;
-  font-size: 28px;
-  box-sizing: border-box;
-  border-radius: 0px;
-  background-color: rgb(0, 162, 233);
 }
 
 .normalFont {
@@ -509,12 +497,64 @@ export default {
 .chartArea {
   padding-top: 14px;
   padding-left: 14px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
   font-style: normal;
-  text-decoration: none;
   font-family: 微软雅黑;
-  color: rgb(102, 102, 102);
+  color: rgb(0, 0, 0);
+}
+
+.r1Right {
+  width: 374rpx;
+  float: left;
+}
+
+.r1Left {
+  width: 374rpx;
+  float: left;
+  height: 170px;
+  border-color: #cdcdcd;
+  border-style: solid;
+  border-width: 0;
+  border-right-width: 1rpx;
+}
+
+.r1 {
+  width: 100%;
+  height: 170px;
+  background-color: white;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+}
+
+.statCell {
+  border-color: #cdcdcd;
+  border-style: solid;
+  border-width: 0;
+  border-bottom-width: 1rpx;
+  height: 85px;
+}
+
+.rightLogo {
+  float: left;
+}
+
+.rightLogo img {
+  width: 56px;
+  height: 56px;
+}
+
+.roomsTitle {
+  float: left;
+  display: inline;
+  width: 225rpx;
+}
+
+.roomsTitleLeft {
+  width: 225rpx;
 }
 
 </style>

@@ -226,22 +226,22 @@ export default {
       }
     },
     async getInitData() {
-      let remindInfo = await getRemindInfo()
-      for (let tmp in this.remindCount) {
-        this.remindCount[tmp] = 0
-      }
-      if (!Array.isArray(remindInfo.Result.Reminds.Remind)) {
-        let tmpInfo = remindInfo.Result.Reminds.Remind
-        remindInfo.Result.Reminds.Remind = []
-        remindInfo.Result.Reminds.Remind.push(tmpInfo)
-      }
-      for (let info of remindInfo.Result.Reminds.Remind) {
-        if (this.remindCount[info.remind_type._text]) {
-          this.remindCount[info.remind_type._text]++
-        } else {
-          this.remindCount[info.remind_type._text] = 1
-        }
-      }
+      // let remindInfo = await getRemindInfo()
+      // for (let tmp in this.remindCount) {
+      //   this.remindCount[tmp] = 0
+      // }
+      // if (!Array.isArray(remindInfo.Result.Reminds.Remind)) {
+      //   let tmpInfo = remindInfo.Result.Reminds.Remind
+      //   remindInfo.Result.Reminds.Remind = []
+      //   remindInfo.Result.Reminds.Remind.push(tmpInfo)
+      // }
+      // for (let info of remindInfo.Result.Reminds.Remind) {
+      //   if (this.remindCount[info.remind_type._text]) {
+      //     this.remindCount[info.remind_type._text]++
+      //   } else {
+      //     this.remindCount[info.remind_type._text] = 1
+      //   }
+      // }
       this.alartCount = 0
       let data = await getAlarmInfo()
       let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
@@ -670,6 +670,7 @@ export default {
 
 .leftImg {
   padding: 10px;
+  padding-left: 12px;
   float: left;
 }
 

@@ -3,8 +3,28 @@
     <div class="searchWrap">
       <div class="search-top">
         <img class="imgSearch" src="/static/images/a/search_black.png">
-        <input v-model="searchContent" type="text" placeholder="请输入栏舍名称" />
+        <input v-model="searchContent" type="text" placeholder="输入栏舍名称" />
       </div>
+    </div>
+    <div @click="goWarnMsgList('1')" class="exception topBorder rightBorder" :class="{bottomBorder:type==1}">
+      <div class="exceptionLeft"><img src="/static/images/lrh_a/alarm_yellow.png"></div>
+      <div class="exceptionRight"> 昨日警报
+        <br><span class="boldNumber">{{remindCount['1']}}</span></div>
+    </div>
+    <div @click="goWarnMsgList('2')" class="exception topBorder" :class="{bottomBorder:type==2}">
+      <div class="exceptionLeft"><img src="/static/images/lrh_a/question_yellow.png"></div>
+      <div class="exceptionRight">日常事务
+        <br><span class="boldNumber">{{remindCount['2']}}</span></div>
+    </div>
+    <div @click="goWarnMsgList('3')" class="exception rightBorder" :class="{bottomBorder:type==3}">
+      <div class="exceptionLeft"><img src="/static/images/lrh_a/clock_yellow.png"></div>
+      <div class="exceptionRight">设备到期
+        <br><span class="boldNumber">{{remindCount['3']}}</span></div>
+    </div>
+    <div @click="goWarnMsgList('4')" class="exception" :class="{bottomBorder:type==4}">
+      <div class="exceptionLeft"><img src="/static/images/lrh_a/modfiy_yellow.png"></div>
+      <div class="exceptionRight">参数修改
+        <br><span class="boldNumber">{{remindCount['4']}}</span></div>
     </div>
     <div class="wrap" v-for="(i,i1) in remindInfo" :key="i" @click='redirectToRoomDetail(i.basic_gateway_id._text)'>
       <div class='warnContent'>
@@ -14,7 +34,7 @@
         </div>
         <div class="lineGray"></div>
         <div class="divRoom">
-          <span class="fontRoom"><img class="imgWarn" src="/static/images/a/warn_yellow.png"></span>
+          <!-- <span class="fontRoom"><img class="imgWarn" src="/static/images/a/warn_yellow.png"></span> -->
           <div class="divMsg">
             <div v-for="(item,i2) in i.displayContents" :key="item" class="fontMsg">{{item}}</div>
           </div>
@@ -30,7 +50,9 @@ export default {
   data() {
     return {
       remindInfo: [],
+      remindCount: { "1": 0, "2": 0, "3": 0, "4": 0 },
       searchContent: '',
+      type: '0',
     }
   },
   // computed: {
@@ -59,7 +81,7 @@ export default {
       let tmpReminds = []
       for (let info of remindInfo.Result.Reminds.Remind) {
         if (info.gatewayName._text.indexOf(newContent) >= 0) {
-          if (info.remind_type._text == this.$root.$mp.query.type) {
+          if (info.remind_type._text == this.type) {
             info.content._cdata = info.content._cdata.replace(new RegExp("'", "gm"), '"')
             if (Array.isArray(info.content._cdata)) {
               info.contentInfo = {}
@@ -76,22 +98,12 @@ export default {
     }
   },
   methods: {
-    redirectToRoomDetail(gatewayId) {
-      redirectToRoomDetail(gatewayId)
-    },
-    async getInitData() {
-      wx.setNavigationBarTitle({
-        title: getWarnTypeNameById(this.$root.$mp.query.type)
-      })
-      remindInfo = await getRemindInfo()
-      if (!Array.isArray(remindInfo.Result.Reminds.Remind)) {
-        let tmpInfo = remindInfo.Result.Reminds.Remind
-        remindInfo.Result.Reminds.Remind = []
-        remindInfo.Result.Reminds.Remind.push(tmpInfo)
-      }
+    goWarnMsgList(type) {
+      this.type = type
+      this.searchContent = ''
       let tmpReminds = []
       for (let info of remindInfo.Result.Reminds.Remind) {
-        if (info.remind_type._text == this.$root.$mp.query.type) {
+        if (info.remind_type._text == type) {
           info.content._cdata = info.content._cdata.replace(new RegExp("'", "gm"), '"')
           if (Array.isArray(info.content._cdata)) {
             info.contentInfo = {}
@@ -104,6 +116,28 @@ export default {
         }
       }
       this.remindInfo = tmpReminds
+    },
+    redirectToRoomDetail(gatewayId) {
+      redirectToRoomDetail(gatewayId)
+    },
+    async getInitData() {
+      remindInfo = await getRemindInfo()
+      for (let tmp in this.remindCount) {
+        this.remindCount[tmp] = 0
+      }
+      if (!Array.isArray(remindInfo.Result.Reminds.Remind)) {
+        let tmpInfo = remindInfo.Result.Reminds.Remind
+        remindInfo.Result.Reminds.Remind = []
+        remindInfo.Result.Reminds.Remind.push(tmpInfo)
+      }
+      for (let info of remindInfo.Result.Reminds.Remind) {
+        if (this.remindCount[info.remind_type._text]) {
+          this.remindCount[info.remind_type._text]++
+        } else {
+          this.remindCount[info.remind_type._text] = 1
+        }
+      }
+
       // console.log('tmpReminds', tmpReminds)
     },
     typeName(info) {
@@ -153,10 +187,9 @@ export default {
 }
 
 .wrap {
+  overflow: auto;
   width: 100%;
-  padding-top: 20px;
-  border-bottom: 1px solid #bebebe;
-  background-color: #f2f4f5;
+  padding-top: 4px;
 }
 
 .lineGray {
@@ -169,6 +202,8 @@ export default {
 .warnContent {
   background-color: #fff;
   padding: 10px;
+  border: 1px solid #bebebe;
+  border-radius: 10px;
 }
 
 .divRoom {
@@ -187,12 +222,11 @@ export default {
   */
   white-space: nowrap;
   text-align: left;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 24px;
+  font-weight: 700;
   font-style: normal;
-  text-decoration: none;
-  font-family: 微软雅黑;
-  color: rgb(0, 0, 0);
+  font-family: 楷体;
+  color: rgb(51, 51, 51);
 }
 
 .imgWarn {
@@ -221,19 +255,18 @@ export default {
   height: 51px;
   white-space: nowrap;
   */
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 400;
   font-style: normal;
-  text-decoration: none;
   font-family: 微软雅黑;
-  color: rgb(0, 0, 0);
+  color: rgb(51, 51, 51);
   display: flex;
   align-items: center;
   justify-content: left;
 }
 
 .divMsg {
-  width: 67%;
+  width: 90%;
   float: left;
 
   /*
@@ -263,9 +296,10 @@ export default {
   padding-top: 4px;
   padding-left: 14px;
   height: 30px;
-  width: 80%;
-  border-radius: 30px;
+  width: 99%;
+  border-radius: 4px;
   background-color: #fff;
+  border: 1rpx solid #9c9c9c;
 }
 
 .search-top input {
@@ -275,10 +309,9 @@ export default {
   line-height: 14px;
   background-color: #fff;
   text-align: left;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   font-style: normal;
-  text-decoration: none;
   font-family: 微软雅黑;
   color: rgb(153, 153, 153);
   background-color: rgb(255, 255, 255);
@@ -291,12 +324,63 @@ export default {
 
 .searchWrap {
   width: 100%;
-  background-color: #01a2e9;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
+}
+
+.exception {
+  width: 372rpx;
+  float: left;
+  text-align: center;
+  padding: 10px 0;
+  /*
+  background-color: #DBDBDB;
+  */
+  font-weight: bold;
+  background-color: #fff;
+  border-bottom: 1rpx solid #ddd;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(51, 51, 51);
+}
+
+.exceptionLeft {
+  float: left;
+  padding: 0 30px;
+}
+
+.exceptionRight {
+  float: left;
+}
+
+.exceptionLeft img {
+  width: 40px;
+  height: 40px;
+}
+
+.topBorder {
+  border-top: 1rpx solid #ddd;
+}
+
+.rightBorder {
+  border-right: 1rpx solid #ddd;
+}
+
+.bottomBorder {
+  border-bottom: 4px solid #009dff;
+}
+
+.boldNumber {
+  font-size: 20px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(51, 51, 51);
 }
 
 </style>

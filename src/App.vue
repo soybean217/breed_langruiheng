@@ -28,7 +28,9 @@ export default {
   flex-wrap: wrap;
 }
 
-body {}
+body {
+  background-color: #f2f4f5;
+}
 
 .bigBtn {
   width: 75%;

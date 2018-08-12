@@ -46,6 +46,6 @@ module.exports = [{
 }, {
   path: '/pages/monitors/warnList',
   config: {
-    navigationBarTitleText: '异常信息'
+    navigationBarTitleText: '提醒'
   }
 }]

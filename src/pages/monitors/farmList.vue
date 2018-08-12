@@ -1,17 +1,13 @@
 <template>
   <div class="container">
-    <div class="farmMenu">
-      <div class="farmMenuNormal" @click='goRecent'>最近访问</div>
-      <div class="farmMenuActive">全部</div>
-    </div>
     <div class="list" v-for="(f0,i0)  in parentLeave" :key='f0.id._text'>
-      <div @click='chooseFarm(f0)' class="level_1">
+      <div @click='chooseFarm(f0)'>
+        <span class="symbol" v-if="f0.hasChild"><span v-if="f0.childShow">-</span><span v-else>+</span>&nbsp;</span>
         {{f0.name._text}}
       </div>
       <div v-if="f0.childShow" class="list1" v-for="(f1,i1) in childMapList[f0.id._text] " :key='f1.id._text'>
-        <div @click='chooseFarm(f1)' class="level_2">
-          {{f1.name._text}}
-          <div class="arrow"><i class="iconfont icon-jiantouxia"></i></div>
+        <div @click='chooseFarm(f1)'>
+          <span class="symbol" v-if="f1.hasChild"><span v-if="f1.childShow">-</span><span v-else>+</span>&nbsp;</span>{{f1.name._text}}
         </div>
         <div v-if="f1.childShow" class="list1" v-for="f2 in childMapList[f1.id._text] " :key='f2.id._text'>
           <div @click='chooseFarm(f2)'><span v-if="f2.hasChild">
@@ -90,11 +86,7 @@ export default {
         url: '../board/main'
       })
     },
-    goRecent() {
-      wx.navigateTo({
-        url: '/pages/monitors/recentRoomList'
-      })
-    },
+
     async getInitData() {
       // let data = await userLogin({})
       let data = await farmList()
@@ -149,41 +141,14 @@ body {
 
 .container {
   height: 100%;
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 10rpx 0;
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.farmMenu {
-  width: 100%;
-  background-color: #f2f4f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.farmMenuNormal {
-  float: left;
-  padding: 12px;
-  width: 49%;
-  text-align: center;
-  color: rgb(153, 153, 153);
-  border-bottom: 3px solid rgb(153, 153, 153);
-}
-
-.farmMenuActive {
-  float: left;
-  width: 49%;
-  padding: 12px;
-  text-align: center;
-  color: rgb(0, 162, 233);
-  border-bottom: 3px solid rgb(0, 162, 233);
+  margin: 0 auto;
 }
 
 .symbol {
@@ -194,43 +159,29 @@ body {
 
 .list {
   width: 100%;
-  font-size: 40rpx;
-  padding: 0;
-  background-color: #fff;
-  border: 5rpx solid #f8f9fb;
-  border-radius: 25rpx;
-}
-
-.list1 {
-  width: 100%;
-  padding-left: 14px;
+  padding-left: 60rpx;
   padding-top: 15rpx;
   padding-bottom: 10rpx;
   background-color: #fff;
-  font-size: 14px;
-  color: rgb(153, 153, 153);
-}
-
-.level_1 {
-  width: 100%;
-  padding: 4px 6px;
-  font-size: 16px;
-  font-weight: 700;
+  border: 5rpx solid #f8f9fb;
+  border-radius: 25rpx;
+  font-size: 20px;
+  font-weight: 400;
   font-style: normal;
   font-family: 微软雅黑;
   color: rgb(51, 51, 51);
 }
 
-.level_2 {
+.list1 {
   width: 100%;
-  padding: 10px 0;
-  border-bottom: 1rpx solid #cccccc;
-}
-
-.arrow {
-  float: right;
-  padding-right: 40px;
+  padding-left: 60rpx;
+  padding-top: 15rpx;
+  padding-bottom: 10rpx;
   font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(51, 51, 51);
 }
 
 </style>

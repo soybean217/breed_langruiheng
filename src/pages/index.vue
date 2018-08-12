@@ -24,7 +24,7 @@
     </div>
     <div class="r2">
       <div class="r2Left">
-        <div class="statCell">
+        <div class="statCell" @click='goWarnRoomList'>
           <div class="roomsTitle">
             <div class="roomsTitleLeft">报警数量</div>
             <div class="roomsTitleLeft bigFontRoom colorRoomRed">{{alarmRoomCount}}</div>

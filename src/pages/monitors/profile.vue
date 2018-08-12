@@ -1,22 +1,13 @@
 <template>
   <div class="container">
-    <!-- <div class="profileArea">
-      <div class="lineArea" @click='goLogin'>
-        <div class='lineLeft'>重新登录</div>
-        <div class='lineRight'>></div>
-      </div>
-      <div class="lineArea" @click='goServerEdit'>
-        <div class='lineLeft'>设置服务器</div>
-        <div class='lineRight'>></div>
-      </div>
-      <div class="lineArea" @click='logout'>
-        <div class='lineLeft'>注销</div>
-        <div class='lineRight'>></div>
-      </div>
-    </div> -->
+    <div class="indexTitleUser">
+      <div class="indexTitleUserLeft"><img src="/static/images/lrh_a/custon_blue.png"></div>
+      <div class="indexTitleUserRight"> 当前用户
+        <br><span class="currentUser">{{username}}</span></div>
+    </div>
     <div class="column_box" @click='goLogin'>
-      <div class="column_img"><img src="/static/images/a/refresh.png"></div>
-      <div class="columnTitle">重新登录</div>
+      <div class="column_img"><img src="/static/images/lrh_a/cpeople_green.png"></div>
+      <div class="columnTitle">切换用户</div>
       <div class="columnRightDetailNormal"><i class="iconfont icon-jiantouyou"></i></div>
     </div>
     <!-- <div class="border_bottom"></div>
@@ -27,8 +18,8 @@
     </div> -->
     <div class="border_bottom"></div>
     <div class="column_box" @click='logout'>
-      <div class="column_img"><img src="/static/images/a/logout.png"></div>
-      <div class="columnTitle">注销</div>
+      <div class="column_img"><img src="/static/images/lrh_a/people_yellow.png"></div>
+      <div class="columnTitle">注销用户</div>
       <div class="columnRightDetailNormal"><i class="iconfont icon-jiantouyou"></i></div>
     </div>
     <!-- <a class="bigBtn" href="login">
@@ -47,7 +38,9 @@ const LAST_SUCCESS_LOGIN_INPUT = 'LAST_SUCCESS_LOGIN_INPUT'
 const LAST_SUCCESS_LOGIN_TICKET = 'LAST_SUCCESS_LOGIN_TICKET'
 export default {
   data() {
-    return {}
+    return {
+      username: '',
+    }
   },
   methods: {
     goLogin() {
@@ -69,7 +62,10 @@ export default {
       })
     },
   },
-  mounted() {}
+  mounted() {
+    let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
+    this.username = cache.userName
+  }
 }
 
 </script>
@@ -112,7 +108,6 @@ body {
   align-items: center;
   justify-content: space-between;
   */
-  padding: 20rpx 0;
   box-sizing: border-box;
   background-color: #f2f3f5;
 }
@@ -126,6 +121,70 @@ body {
 
 .column_box {
   padding-left: 20px;
+}
+
+.indexTitleUser {
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  color: white;
+  padding: 15px 28px;
+  display: flex;
+  /*
+  flex-direction: column;
+  */
+  align-items: center;
+  font-size: 20px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+  box-sizing: border-box;
+  border-radius: 10px;
+  background-color: white;
+  margin: 20rpx 0;
+}
+
+.indexTitleUserLeft {
+  float: left
+}
+
+.indexTitleUserLeft img {
+  width: 56px;
+  height: 56px;
+}
+
+.currentUser {
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+}
+
+.indexTitleUserRight {
+  float: left;
+  text-align: right;
+  padding-left: 20px;
+}
+
+.column_img img {
+  width: 32px;
+  height: 32px;
+}
+
+.column_img {
+  padding-top: 4px;
+}
+
+.columnTitle {
+  float: left;
+  width: 75%;
+  font-size: 18px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
 }
 
 </style>

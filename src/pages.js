@@ -1,12 +1,12 @@
 module.exports = [{
   path: '/pages/index',
   config: {
-    navigationBarTitleText: '栏舍健康状况'
+    navigationBarTitleText: '栏舍状态总览'
   }
 }, {
   path: '/pages/monitors/farmList',
   config: {
-    navigationBarTitleText: '农场列表'
+    navigationBarTitleText: '监控列表'
   }
 }, {
   path: '/pages/monitors/login',

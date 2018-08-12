@@ -102,15 +102,16 @@ body {
 
 .column_box {
   width: 100%;
-  height: 46px;
+  height: 48px;
   font-size: 14px;
-  line-height: 46px;
+  line-height: 48px;
   background-color: #fff;
   padding-left: 4%;
   padding-right: 4%;
   position: relative;
   display: flex;
   align-items: center;
+  border-radius: 10px;
 }
 
 .column_img {
@@ -129,7 +130,7 @@ body {
   padding-right: 30px;
   white-space: nowrap;
   text-align: left;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   font-style: normal;
   text-decoration: none;

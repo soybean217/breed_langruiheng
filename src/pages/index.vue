@@ -9,53 +9,47 @@
         <div class="statCell">
           <div class="roomsTitle">
             <div class="roomsTitleLeft">栏舍总数</div>
-            <div class="roomsTitleLeft">{{totalRoomCount}}</div>
+            <div class="roomsTitleLeft bigFontRoom colorRoomBlue">{{totalRoomCount}}</div>
           </div>
           <div class='rightLogo'><img src="/static/images/lrh_a/home_blue.png"></div>
         </div>
-        <div class="statCell"></div>
+        <div class="statCell">
+          <div class="roomsTitle">
+            <div class="roomsTitleLeft">正常数量</div>
+            <div class="roomsTitleLeft bigFontRoom colorRoomGreen">{{normalRoomCount}}</div>
+          </div>
+          <div class='rightLogo'><img src="/static/images/lrh_a/ok_green.png"></div>
+        </div>
       </div>
     </div>
-    <div class="wrapEcharts">
-      <div class="mainChart1">
+    <div class="r2">
+      <div class="r2Left">
+        <div class="statCell">
+          <div class="roomsTitle">
+            <div class="roomsTitleLeft">报警数量</div>
+            <div class="roomsTitleLeft bigFontRoom colorRoomRed">{{alarmRoomCount}}</div>
+          </div>
+          <div class='rightLogo'><img src="/static/images/lrh_a/alarm_red.png"></div>
+        </div>
       </div>
-      <div class="mainChart2">
-        <div class="statList"><span style="color:#53bd53">&#9635;</span> 正常：{{normalRoomCount}} 间</div>
-        <div class="statList" @click='goWarnRoomList'><span style="color:#f6d101">&#9635;</span> 报警：{{alarmRoomCount}} 间</div>
-        <div class="statList"><span style="color:#e53036">&#9635;</span> 离线：{{offlineRoomCount}} 间</div>
-      </div>
-      <div class="mainChart3">
-        <div class="bigFont">{{totalRoomCount}}</div>
-        <div class="circleBlue"></div>
-        <div class='normalFont'> &nbsp;栏舍合计</div>
-        <div class="bigFont">{{normalRate}}</div>
-        <div class="squareGreen">&#10004;</div>
-        <div class='normalFont'> &nbsp;正常比例</div>
+      <div class="r1Right">
+        <div class="statCell">
+          <div class="roomsTitle">
+            <div class="roomsTitleLeft">离线数量</div>
+            <div class="roomsTitleLeft bigFontRoom colorRoomGray">{{offlineRoomCount}}</div>
+          </div>
+          <div class='rightLogo'><img src="/static/images/lrh_a/warn_gray.png"></div>
+        </div>
       </div>
     </div>
-    <div class="indexTitleStat" style="height:10px;width:100%"></div>
-    <div class="column_box" @click="goWarnMsgList('1')">
-      <div class="column_img"><img src="/static/images/alarm.png"></div>
-      <div class="columnTitle">昨日警报</div>
-      <div class="columnRightDetailWarn">{{remindCount['1']}}</div>
-    </div>
-    <div class="border_bottom"></div>
-    <div class="column_box" @click="goWarnMsgList('2')">
-      <div class="column_img"><img src="/static/images/calendar.png"></div>
-      <div class="columnTitle">日常事务</div>
-      <div class="columnRightDetailNormal">{{remindCount['2']}}</div>
-    </div>
-    <div class="border_bottom"></div>
-    <div class="column_box" @click="goWarnMsgList('3')">
-      <div class="column_img"><img src="/static/images/device.png"></div>
-      <div class="columnTitle">设备到期</div>
-      <div class="columnRightDetailNormal">{{remindCount['3']}}</div>
-    </div>
-    <div class="border_bottom"></div>
-    <div class="column_box" @click="goWarnMsgList('4')">
-      <div class="column_img"><img src="/static/images/switch.png"></div>
-      <div class="columnTitle">参数修改</div>
-      <div class="columnRightDetailNormal">{{remindCount['4']}}</div>
+    <div class="rRecent">
+      <div class="rRecentTitle">
+        <div class="leftImg">
+          <img src="/static/images/lrh_a/last_green.png">
+        </div>
+        <div class="rightContent">最近浏览栏舍</div>
+      </div>
+      <room-item v-for="(gateway,i1) in recentInfo.gateways" :key="gateway._attributes.Id" :room="gateway"></room-item>
     </div>
     <!-- <div class="divB1"> -->
     <!--
@@ -74,12 +68,49 @@
 <script>
 import echarts from 'echarts'
 import mpvueEcharts from 'mpvue-echarts'
-import { getAlarmInfo, getRemindInfo, formatArray } from '@/utils/api'
+import { getStorage, setStorage } from '@/utils/wechat'
+import { getAlarmInfo, getRemindInfo, formatArray, syncGatewaysConfig, gatewayDetail, redirectToRoomDetail, detailValueFormat } from '@/utils/api'
+import roomItem from '@/components/roomListItem'
 const WARN_GATEWAY_LIST = 'WARN_GATEWAY_LIST'
+const GATEWAY_CONFIG_PREFIX = 'GC_'
+const CURRENT_GATEWAY = 'CURRENT_GATEWAY'
+const RECENT_GATEWAYS = 'RECENT_GATEWAYS'
 const LAST_SUCCESS_LOGIN_INPUT = 'LAST_SUCCESS_LOGIN_INPUT'
+const DETAIL_LIMIT = 4
 
 var chartPie = null;
-var option = {}
+var option = {
+  backgroundColor: '#84c1ff',
+  color: ['#67c337', '#f66c6c', '#91949a', '#f7d200', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
+  series: [{
+    label: {
+      show: false,
+      normal: {
+        fontSize: 14
+      }
+    },
+    labelLine: {
+      show: false
+    },
+    type: 'pie',
+    center: ['50%', '45%'],
+    radius: ['0%', '70%'],
+    data: [{
+      value: 3,
+      name: '正常',
+    }, {
+      value: 1,
+      name: '异常',
+    }],
+    // itemStyle: {
+    //   emphasis: {
+    //     shadowBlur: 10,
+    //     shadowOffsetX: 0,
+    //     shadowColor: 'rgba(0, 2, 2, 0.3)'
+    //   }
+    // }
+  }]
+}
 
 function initChart(canvas, width, height) {
   chartPie = echarts.init(canvas, null, {
@@ -87,6 +118,7 @@ function initChart(canvas, width, height) {
     height: height
   });
   canvas.setChart(chartPie);
+  console.log('initChart')
   // chartPie.on("mousedown", function(params) {
   //   console.log('mousedown', params)
   //   if (params.name == "异常栏舍") {
@@ -96,38 +128,7 @@ function initChart(canvas, width, height) {
   //   }
   // });
 
-  option = {
-    backgroundColor: '#84c1ff',
-    color: ['#67c337', '#f66c6c', '#91949a', '#f7d200', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
-    series: [{
-      label: {
-        show: false,
-        normal: {
-          fontSize: 14
-        }
-      },
-      labelLine: {
-        show: false
-      },
-      type: 'pie',
-      center: ['50%', '45%'],
-      radius: ['0%', '70%'],
-      data: [{
-        value: 3,
-        name: '正常',
-      }, {
-        value: 1,
-        name: '异常',
-      }],
-      // itemStyle: {
-      //   emphasis: {
-      //     shadowBlur: 10,
-      //     shadowOffsetX: 0,
-      //     shadowColor: 'rgba(0, 2, 2, 0.3)'
-      //   }
-      // }
-    }]
-  }
+
 
   // chartPie.setOption(option);
 
@@ -137,7 +138,8 @@ function initChart(canvas, width, height) {
 
 export default {
   components: {
-    mpvueEcharts
+    mpvueEcharts,
+    roomItem
   },
   data() {
     return {
@@ -153,6 +155,7 @@ export default {
       alarmRoomCount: 0,
       totalRoomCount: 0,
       username: '',
+      recentInfo: 0,
     }
   },
   methods: {
@@ -168,6 +171,58 @@ export default {
         wx.navigateTo({
           url: '/pages/monitors/warnRoomList'
         })
+      }
+    },
+    async getInitRecentRoomData() {
+      console.log('getInitRecentRoomData')
+      let data = await getStorage(RECENT_GATEWAYS)
+      console.log('RECENT_GATEWAYS', data)
+      this.recentInfo = data.data.data
+      syncGatewaysConfig({ gateways: this.recentInfo.gateways })
+      for (let gateway of this.recentInfo.gateways) {
+        var cache = wx.getStorageSync(GATEWAY_CONFIG_PREFIX + gateway._attributes.Id)
+        gateway._attributes.Name = cache._attributes.Name
+        let gw = await gatewayDetail({ gatewayId: gateway._attributes.Id })
+        if (gw.Result.Alarm) {
+          gateway.Alarm = gw.Result.Alarm
+        }
+        if (gw.Result.OnLine._text == 'Y') {
+          let tmpCount = 0
+          for (let sensor of gw.Result.SensorDatas.Sensor) {
+            if (tmpCount >= DETAIL_LIMIT) {
+              break
+            }
+            // if (parseInt(sensor._attributes.Val) > -600) {
+            for (let sensorConfig of cache.Sensors.Sensor) {
+              if (sensorConfig._attributes.Type == "TEMPERATURE" && sensorConfig._attributes.Id == sensor._attributes.Id) {
+                if (!gateway.details) {
+                  gateway.details = []
+                }
+                gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
+                tmpCount++
+                break
+              }
+            }
+            for (let sensorConfig of cache.Sensors.Sensor) {
+              if (sensorConfig._attributes.Type == "HUMIDITY" && sensorConfig._attributes.Id == sensor._attributes.Id) {
+                if (!gateway.details) {
+                  gateway.details = []
+                }
+                gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
+                tmpCount++
+                break
+              }
+            }
+            // }
+          }
+        } else {
+          gateway.details = []
+          gateway.details.push('设备离线')
+        }
+
+        let tmpInfo = this.recentInfo
+        this.recentInfo = {}
+        this.recentInfo = tmpInfo
       }
     },
     async getInitData() {
@@ -271,6 +326,7 @@ export default {
 
       chartPie.off("mousedown")
       chartPie.off("click")
+      this.getInitRecentRoomData()
       /*
       chartPie.on("mousedown", function(params) {
         console.log('mousedown', params)
@@ -519,9 +575,30 @@ export default {
   border-right-width: 1rpx;
 }
 
+.r2Left {
+  width: 374rpx;
+  float: left;
+  height: 85px;
+  border-color: #cdcdcd;
+  border-style: solid;
+  border-width: 0;
+  border-right-width: 1rpx;
+}
+
 .r1 {
   width: 100%;
   height: 170px;
+  background-color: white;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+}
+
+.r2 {
+  width: 100%;
+  height: 85px;
   background-color: white;
   font-size: 14px;
   font-weight: 400;
@@ -540,6 +617,7 @@ export default {
 
 .rightLogo {
   float: left;
+  padding-top: 16px;
 }
 
 .rightLogo img {
@@ -555,6 +633,72 @@ export default {
 
 .roomsTitleLeft {
   width: 225rpx;
+  padding-top: 12px;
+  padding-left: 12px;
+}
+
+.bigFontRoom {
+  font-size: 32px;
+  font-weight: 700;
+  font-style: normal;
+  font-family: 微软雅黑;
+  padding-top: 5px;
+  padding-left: 40px;
+}
+
+.colorRoomBlue {
+  color: rgb(64, 158, 255);
+}
+
+.colorRoomGreen {
+  color: #67c23a;
+}
+
+.colorRoomRed {
+  color: #f56c6c;
+}
+
+.colorRoomGray {
+  color: #909298;
+}
+
+.rRecent {
+  width: 100%;
+  overflow: auto;
+  background-color: #f2f2f2;
+}
+
+.leftImg {
+  padding: 10px;
+  float: left;
+}
+
+.rightContent {
+  float: left;
+  padding-top: 16px;
+  padding-left: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+  overflow: auto;
+  align-items: left;
+  justify-content: center;
+  display: flex;
+}
+
+.leftImg img {
+  width: 32px;
+  height: 32px;
+}
+
+.rRecentTitle {
+  width: 100%;
+  overflow: auto;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 }
 
 </style>

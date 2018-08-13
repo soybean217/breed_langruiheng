@@ -15,7 +15,7 @@
       <div class="baseStateCell">日龄
         <br><span class="baseStateValue">{{state.dayCount}}</span></div>
       <div class="baseStateCell">模式
-        <br><span class="baseStateValue">{{state.state}}</span></div>
+        <br><span class="baseStateText">{{state.state}}</span></div>
       <div class="baseStateCell" v-bind:class="{noneRightBorder:true}">通风
         <br><span class="baseStateValue">{{state.wind}}</span></div>
     </div>
@@ -31,7 +31,7 @@
         <div class="monitorLeft">{{detail.name}}
           <br>{{detail.unite}}
         </div>
-        <div class="monitorRight">{{detail.oriValue}}</div>
+        <div class="monitorRight" v-bind:class="{red:'colorError'==detail.style,yellow:'colorWarn'==detail.style,text:'colorWarn'==detail.style||'colorError'==detail.style||detail.name=='风量'}">{{detail.oriValue}}</div>
         <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
       </div>
     </div>
@@ -214,9 +214,9 @@ export default {
         case 'HUMIDITY':
           return 'green'
         case 'AMMONIA':
-          return ''
+          return 'green'
         case 'BRIGHTENESS':
-          return ''
+          return 'green'
         case 'DRINK':
           return ''
         case 'FORAGE':
@@ -224,13 +224,13 @@ export default {
         case 'AMMETER':
           return ''
         case 'CO2':
-          return ''
+          return 'green'
         case 'ANEMOMETER':
-          return ''
+          return 'green'
         case 'PRESSURE':
-          return ''
+          return 'green'
         case 'AIRFLOW':
-          return ''
+          return 'green'
         default:
           return ''
       }
@@ -762,7 +762,7 @@ export default {
 
 .controllersWrap {
   overflow: auto;
-  width: 100%;
+  width: 740rpx;
   background-color: white;
   border-radius: 6px;
   margin: 5rpx;
@@ -793,8 +793,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 6rpx 0;
-  overflow: auto;
+  height: 40px;
   /*
+  overflow: auto;
   background-color: #DBDBDB;
   */
   background-color: #fff;
@@ -829,6 +830,18 @@ export default {
   font-style: normal;
   font-family: 微软雅黑;
   color: rgb(51, 51, 51);
+}
+
+.text.monitorRight {
+  font-size: 18px;
+}
+
+.red.monitorRight {
+  color: #f56c6c
+}
+
+.yellow.monitorRight {
+  color: #e6a23c
 }
 
 .link {
@@ -997,7 +1010,7 @@ export default {
 }
 
 .styleController {
-  width: 185rpx;
+  width: 180rpx;
   float: left;
   height: 60px;
   text-align: center;
@@ -1011,9 +1024,13 @@ export default {
 }
 
 .baseStateValue {
-  color: rgb(103, 194, 58);
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-style: normal;
+  font-family: 微软雅黑;
+}
+
+.baseStateText {
+  font-size: 18px;
   font-style: normal;
   font-family: 微软雅黑;
 }

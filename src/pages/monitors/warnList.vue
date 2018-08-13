@@ -222,11 +222,12 @@ export default {
   */
   white-space: nowrap;
   text-align: left;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 400;
   font-style: normal;
-  font-family: 楷体;
-  color: rgb(51, 51, 51);
+  text-decoration: none;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
 }
 
 .imgWarn {
@@ -255,7 +256,7 @@ export default {
   height: 51px;
   white-space: nowrap;
   */
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 400;
   font-style: normal;
   font-family: 微软雅黑;
@@ -288,7 +289,7 @@ export default {
   text-decoration: none;
   font-family: 微软雅黑;
   color: rgb(102, 102, 102);
-  padding-top: 14px;
+  padding-top: 10px;
 }
 
 .search-top {

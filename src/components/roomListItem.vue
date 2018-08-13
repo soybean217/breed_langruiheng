@@ -42,7 +42,7 @@ export default {
   overflow: auto;
   clear: both;
   width: 100%;
-  margin: 5px 0;
+  margin: 10px 0;
   background-color: white;
 }
 
@@ -73,8 +73,8 @@ export default {
 .roomName {
   padding: 5px 0;
   background-color: white;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 22px;
+  /*font-weight: 700;*/
   font-style: normal;
   font-family: 楷体;
   color: rgb(51, 51, 51);

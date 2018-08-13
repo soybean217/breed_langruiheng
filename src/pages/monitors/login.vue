@@ -37,6 +37,7 @@
 <script>
 import { getStorage, setStorage } from '@/utils/wechat'
 import { userLogin } from '@/utils/api'
+import request from '@/utils/request'
 const LAST_SPLASH_DATA = 'LAST_SPLASH_DATA'
 const LAST_SUCCESS_LOGIN_INPUT = 'LAST_SUCCESS_LOGIN_INPUT'
 const LAST_SUCCESS_LOGIN_TICKET = 'LAST_SUCCESS_LOGIN_TICKET'
@@ -48,7 +49,7 @@ export default {
     return {
       username: '',
       password: '',
-      server: wx.getStorageSync('SERVER_HOST'),
+      server: wx.getStorageSync('SERVER_HOST').replace('https://', ''),
     }
   },
 
@@ -83,10 +84,14 @@ export default {
     },
     async login() {
       // let data = await userLogin({ userName: this.username, password:this.password, count: 3 })
-      if (this.server != wx.getStorageSync('SERVER_HOST')) {
-        wx.setStorageSync('SERVER_HOST', this.server)
+      console.log('https://' + this.server != wx.getStorageSync('SERVER_HOST'))
+      if ('https://' + this.server != wx.getStorageSync('SERVER_HOST')) {
+        wx.setStorageSync('SERVER_HOST', 'https://' + this.server)
+        console.log('cp')
         request.initConfig()
+        console.log('cp')
       }
+      console.log("wx.getStorageSync('SERVER_HOST')", wx.getStorageSync('SERVER_HOST'))
       let data = await userLogin({ userName: this.username, password: this.password })
       // let data = await userLogin()
       if (data.Result.ReturnFlag._text == '0' && data.Result.ReturnMsg._text == "success") {
@@ -172,7 +177,6 @@ export default {
   text-align: center;
   color: rgb(51, 51, 51);
   font-size: 36px;
-  font-weight: 700;
   font-style: normal;
   text-decoration: none;
   font-family: 楷体;

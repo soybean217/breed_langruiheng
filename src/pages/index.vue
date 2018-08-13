@@ -42,13 +42,13 @@
         </div>
       </div>
     </div>
-    <div class="rRecent" v-if="recentInfo">
-      <div class="rRecentTitle">
-        <div class="leftImg">
-          <img src="/static/images/lrh_a/last_green.png">
-        </div>
-        <div class="rightContent">最近浏览栏舍</div>
+    <div class="rRecentTitle">
+      <div class="leftImg">
+        <img src="/static/images/lrh_a/last_green.png">
       </div>
+      <div class="rightContent">最近浏览栏舍</div>
+    </div>
+    <div class="rRecent" v-if="recentInfo">
       <room-item v-for="(gateway,i1) in recentInfo.gateways" :key="gateway._attributes.Id" :room="gateway"></room-item>
     </div>
     <!-- <div class="divB1"> -->
@@ -587,7 +587,7 @@ export default {
 
 .r1 {
   width: 100%;
-  height: 170px;
+  overflow: auto;
   background-color: white;
   font-size: 14px;
   font-weight: 400;

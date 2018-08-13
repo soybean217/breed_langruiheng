@@ -138,13 +138,13 @@ export function redirectToRoomDetail(gatewayId) {
 export async function checkLoginStatus() {
 
 }
-export function detailValueFormat({ config = {}, item = {}, catalog = '' } = {}) {
+export function detailValueFormat({ config = {}, item = {}, catalog = '', withoutUnit = false } = {}) {
   switch (catalog) {
     case 'controller':
       return _formatController({ config: config, item: item })
       break
     case 'sensor':
-      return _formatSensor({ config: config, item: item })
+      return _formatSensor({ config: config, item: item, withoutUnit: withoutUnit })
       break
     default:
       return item._attributes.Val
@@ -205,16 +205,51 @@ function _formatSensorUnite(config = {}, val) {
       return val
   }
 }
+export function getSensorUnite(config = {}) {
+  return _getSensorUnite(config)
+}
 
-function _formatSensor({ config = {}, item = {} } = {}) {
+function _getSensorUnite(config = {}) {
+  switch (config._attributes.Type) {
+    case 'TEMPERATURE':
+      return '℃'
+    case 'HUMIDITY':
+      return '%'
+    case 'AMMONIA':
+      return 'ppm'
+    case 'BRIGHTENESS':
+      return 'lx'
+    case 'DRINK':
+      return 'kg'
+    case 'FORAGE':
+      return 'kg'
+    case 'AMMETER':
+      return 'kw.h'
+    case 'CO2':
+      return 'ppm'
+    case 'ANEMOMETER':
+      return 'm/s'
+    case 'PRESSURE':
+      return 'pa'
+    case 'AIRFLOW':
+      return 'm3/h'
+    default:
+      return ' '
+  }
+}
+
+function _formatSensor({ config = {}, item = {}, withoutUnit = false } = {}) {
   let val = parseInt(item._attributes.Val)
   if (val <= -600) {
     return _matchErrMsg(val)
   } else {
-    return _formatSensorUnite(config, item._attributes.Val)
+    if (withoutUnit) {
+      return item._attributes.Val
+    } else {
+      return _formatSensorUnite(config, item._attributes.Val)
+    }
+    return item._attributes.Val
   }
-
-  return item._attributes.Val
 }
 
 function _formatController({ config = {}, item = {} } = {}) {

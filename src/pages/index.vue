@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="rRecent">
+    <div class="rRecent" v-if="recentInfo">
       <div class="rRecentTitle">
         <div class="leftImg">
           <img src="/static/images/lrh_a/last_green.png">
@@ -598,7 +598,7 @@ export default {
 
 .r2 {
   width: 100%;
-  height: 85px;
+  overflow: auto;
   background-color: white;
   font-size: 14px;
   font-weight: 400;

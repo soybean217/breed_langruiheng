@@ -288,7 +288,7 @@ export default {
   text-decoration: none;
   font-family: 微软雅黑;
   color: rgb(102, 102, 102);
-  padding-top: 10px;
+  padding-top: 14px;
 }
 
 .search-top {

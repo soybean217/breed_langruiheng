@@ -2,50 +2,79 @@
   <div class="container">
     <div class="onlineWrap">
       {{chartTitle}}
-      <div v-if="online" class="onlineDiv">
+      <!-- <div v-if="online" class="onlineDiv">
         在线&nbsp;
         <img class="onlineIcon" src='/static/images/a/signal_green.png'></div>
-      <div v-else>离线</div>
+      <div v-else>离线</div> -->
     </div>
     <div class="echarts-wrap">
       <mpvue-echarts :echarts="echarts" :onInit="onInit" canvasId="detail-line" />
     </div>
     <div class="divFull" v-if="status.alarm"><span class="roomWarn">报警：{{status.alarm}}</span></div>
     <div class="baseState">
-      <div class="baseStateCell">{{state.state}}</div>
-      <div class="baseStateVerticalLine"></div>
-      <div class="baseStateCell">{{state.wind}}</div>
-      <div class="baseStateVerticalLine"></div>
-      <div class="baseStateCell">{{state.dayCount}}</div>
+      <div class="baseStateCell">日龄
+        <br><span class="baseStateValue">{{state.dayCount}}</span></div>
+      <div class="baseStateCell">模式
+        <br><span class="baseStateValue">{{state.state}}</span></div>
+      <div class="baseStateCell" v-bind:class="{noneRightBorder:true}">通风
+        <br><span class="baseStateValue">{{state.wind}}</span></div>
     </div>
     <!-- <div class="addtionParasCss">
       <div class="status" v-for="(para,i2) in addtionParas" :key='i2'>
         {{para.title}}：<span class="colorGreen" v-bind:class="para.style">{{para.description}}</span>
       </div>
     </div> -->
+    <!-- v-if="!(detail.config._attributes.Type=='DRINK'||detail.config._attributes.Type=='AMMETER'||detail.config._attributes.Type=='FORAGE')" -->
     <div class="monitors">
-      <div class="monitor" v-bind:class="{ monitorSelected: detail.isSelected }" v-for="(detail,i1) in details" :key='i1' @click='selectMachine(detail)'>
-        <div :class="detail.backgroundStyle">{{detail.name}}</div>
-        <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
-        <div v-if="detail.icon" class="imgIconDiv">
-          <img :src='detail.icon' class="imgIcon" />
-          <!-- <div class="desc">{{detail.value}}</div> -->
-          <span class="smallByIcon">{{detail.value}}</span>
+      <div :class="detail.cellStyle" v-if="!(detail.config._attributes.Type=='DRINK'||detail.config._attributes.Type=='AMMETER'||detail.config._attributes.Type=='FORAGE')" v-for="(detail,i1) in details" :key='i1' @click='selectMachine(detail)'>
+        <div class="selectState" v-bind:class="{ monitorSelected: detail.isSelected }"></div>
+        <div class="monitorLeft">{{detail.name}}
+          <br>{{detail.unite}}
         </div>
-        <div v-else class="dataValue" v-bind:class="detail.style">{{detail.value}}</div>
+        <div class="monitorRight">{{detail.oriValue}}</div>
+        <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
       </div>
     </div>
-    <div class="lineWrap"></div>
+    <div class="baseState">
+      <block v-if='use.DRINK'>
+        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.DRINK.isSelected }" @click='selectMachine(use.DRINK)'>
+          <div class="useLogo">
+            <img src="/static/images/lrh_a/water.png">
+          </div>
+          <div class="useContent">饮水量
+            <br>{{use.DRINK.value}}</div>
+        </div>
+      </block>
+      <block v-if='use.AMMETER'>
+        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.AMMETER.isSelected }" @click='selectMachine(use.AMMETER)'>
+          <div class="useLogo">
+            <img src="/static/images/lrh_a/degree.png">
+          </div>
+          <div class="useContent">用电量
+            <br>{{use.AMMETER.value}}</div>
+        </div>
+      </block>
+      <block v-if='use.FORAGE'>
+        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.FORAGE.isSelected,noneRightBorder:true }" @click='selectMachine(use.FORAGE)'>
+          <div class="useLogo">
+            <img src="/static/images/lrh_a/forage.png">
+          </div>
+          <div class="useContent">耗料量
+            <br>{{use.FORAGE.value}}</div>
+        </div>
+      </block>
+    </div>
     <div class="controllersWrap">
-      <div class="styleController" v-bind:class="{ monitorSelected: detail.isSelected }" v-for="(detail,i1) in controllerDetails" :key='i1' @click='selectMachine(detail)'>
+      <div class="styleController" v-for="(detail,i2) in controllerDetails" v-bind:class='{noneRightBorder:i2%4==3}' :key='i1'>
         <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
         <div v-if="detail.icon" class="imgIconDiv">
           <img :src='detail.icon' class="imgIcon" />
           <!-- <div class="desc">{{detail.value}}</div> -->
-          <span class="smallByIcon">{{detail.value}}</span>
+          <!-- <span class="smallByIcon">{{detail.value}}</span> -->
         </div>
         <div v-else class="dataValue" v-bind:class="detail.style">{{detail.value}}</div>
         <div class="styleControllerTitle">{{detail.name}}</div>
+        <div class="styleControllerValue">{{detail.value}}</div>
       </div>
     </div>
   </div>
@@ -53,7 +82,7 @@
 <script>
 import echarts from 'echarts'
 import mpvueEcharts from 'mpvue-echarts'
-import { gatewayDetail, detailValueFormat, hourData, minData, formatErrMsg, formatArray, formatSensorUnite } from '@/utils/api'
+import { gatewayDetail, detailValueFormat, hourData, minData, formatErrMsg, formatArray, formatSensorUnite, getSensorUnite } from '@/utils/api'
 const GATEWAY_CONFIG_PREFIX = 'GC_'
 const CURRENT_GATEWAY = 'CURRENT_GATEWAY'
 const RECENT_GATEWAYS = 'RECENT_GATEWAYS'
@@ -136,7 +165,8 @@ export default {
       addtionParas: [],
       state: {},
       online: true,
-      chartTitle: '小时数据'
+      use: {},
+      chartTitle: '小时数据',
     }
   },
   methods: {
@@ -175,6 +205,34 @@ export default {
           return 'styleBlue'
         default:
           return 'styleRed'
+      }
+    },
+    borderBottomBackgroundColor(config) {
+      switch (config._attributes.Type) {
+        case 'TEMPERATURE':
+          return 'green'
+        case 'HUMIDITY':
+          return 'green'
+        case 'AMMONIA':
+          return ''
+        case 'BRIGHTENESS':
+          return ''
+        case 'DRINK':
+          return ''
+        case 'FORAGE':
+          return ''
+        case 'AMMETER':
+          return ''
+        case 'CO2':
+          return ''
+        case 'ANEMOMETER':
+          return ''
+        case 'PRESSURE':
+          return ''
+        case 'AIRFLOW':
+          return ''
+        default:
+          return ''
       }
     },
     selectMachine(sensor) {
@@ -414,9 +472,12 @@ export default {
       })
       this.state.state = this.getRunModeText(gw.Result.RunMode._text)
       // this.state.wind = '通风：' + formatErrMsg(gw.Result.VLevel._text)
-      this.state.wind = '通风：' + (parseInt(gw.Result.VLevel._text) >= 0 ? formatErrMsg(gw.Result.VLevel._text) : '---')
-      this.state.dayCount = '天龄：' + formatErrMsg(gw.Result.Days._text)
+      // this.state.wind = '通风：' + (parseInt(gw.Result.VLevel._text) >= 0 ? formatErrMsg(gw.Result.VLevel._text) : '---')
+      this.state.wind = parseInt(gw.Result.VLevel._text) >= 0 ? formatErrMsg(gw.Result.VLevel._text) : '---'
+      // this.state.dayCount = '天龄：' + formatErrMsg(gw.Result.Days._text)
+      this.state.dayCount = formatErrMsg(gw.Result.Days._text)
     },
+
     async getInitData() {
       let gatewayId = wx.getStorageSync(CURRENT_GATEWAY)
       // console.log('getInitData', gatewayId)
@@ -457,10 +518,12 @@ export default {
                         catalog: 'addtionPara',
                         'name': sc._attributes.Name,
                         config: sensorConfig,
+                        unite: getSensorUnite(sensorConfig),
                         'value': tmpText,
                         oriValue: s._attributes.Val,
                         style: this.computeColorClass(tmpText),
-                        backgroundStyle: 'dataTitle stylePurple'
+                        backgroundStyle: 'dataTitle stylePurple',
+                        cellStyle: 'monitor orange',
                       }
                       addParaDetails.push(addParaDetail)
                       break;
@@ -469,16 +532,26 @@ export default {
                 }
               }
               let tmpText = detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' })
-              details.push({
+              let index = details.push({
                 isSelected: false,
                 catalog: 'sensor',
                 'name': sensorConfig._attributes.Name,
                 config: sensorConfig,
+                unite: getSensorUnite(sensorConfig),
                 'value': tmpText,
+                oriValue: detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor', withoutUnit: true }),
                 style: this.computeColorClass(tmpText),
                 backgroundStyle: 'dataTitle ' + this.titleBackgroundColor(sensorConfig),
+                cellStyle: 'monitor ' + this.borderBottomBackgroundColor(sensorConfig),
                 addPara: addParaDetail,
               })
+              if (sensorConfig._attributes.Type == 'DRINK') {
+                this.use.DRINK = details[index - 1]
+              } else if (sensorConfig._attributes.Type == 'AMMETER') {
+                this.use.AMMETER = details[index - 1]
+              } else if (sensorConfig._attributes.Type == 'FORAGE') {
+                this.use.FORAGE = details[index - 1]
+              }
               break
             }
           }
@@ -571,7 +644,7 @@ export default {
       return result
     },
     getControlIcon({ config = {}, item = {} } = {}) {
-      let dictory = '/static/images/breed/a/'
+      let dictory = '/static/images/breed/'
       // if (item._attributes.Degree.length > 0 && item._attributes.Degree != '0') {
       //   return false
       // } else {
@@ -632,24 +705,6 @@ export default {
 }
 
 
-.monitor {
-  float: left;
-  width: 186rpx;
-  height: 60px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 30rpx 0;
-  /*
-  background-color: #DBDBDB;
-  */
-  background-color: #fff;
-  border-bottom: 1rpx solid #f2f4f5;
-  border-right: 1rpx solid #f2f4f5;
-}
-
 .addtionParasCss {
   width: 620rpx;
 }
@@ -662,13 +717,17 @@ export default {
   border-bottom: 1rpx solid #bbb;
 }
 
-.monitorSelected {
-  background-color: #99FFFF;
+.monitorSelected.selectState {
+  background-color: #409eff;
+}
+
+.monitorSelected.baseStateCell {
+  background-color: #9ff;
 }
 
 .imgIcon {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
 }
 
 .imgIconDiv {
@@ -701,13 +760,75 @@ export default {
   text-shadow: 2px 2px 10px rgb(0, 112, 192);
 }
 
+.controllersWrap {
+  overflow: auto;
+  width: 100%;
+  background-color: white;
+  border-radius: 6px;
+  margin: 5rpx;
+}
+
 .monitors {
+  margin: 5rpx;
   width: 100%;
   padding-top: 8px;
   text-align: center;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+  border-radius: 6px;
+}
+
+.monitor {
+  float: left;
+  margin: 0 30rpx;
+  width: 310rpx;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rpx 0;
+  overflow: auto;
+  /*
+  background-color: #DBDBDB;
+  */
+  background-color: #fff;
+  border-bottom: 4px solid #3e9fff;
+}
+
+
+.green.monitor {
+  border-bottom: 4px solid #67c337;
+}
+
+.orange.monitor {
+  border-bottom: 4px solid #e7a43a;
+}
+
+.selectState {
+  float: left;
+  height: 20px;
+  width: 4px;
+}
+
+.monitorLeft {
+  float: left;
+  width: 45%;
+}
+
+.monitorRight {
+  float: left;
+  width: 52%;
+  font-size: 24px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(51, 51, 51);
 }
 
 .link {
@@ -736,11 +857,21 @@ export default {
 }
 
 .styleControllerTitle {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 400;
   font-style: normal;
   font-family: 微软雅黑;
-  color: rgb(102, 102, 102);
+  color: rgb(51, 51, 51);
+}
+
+.styleControllerValue {
+  width: 60%;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 102, 204);
 }
 
 .styleBlue {
@@ -823,30 +954,35 @@ export default {
 }
 
 .baseState {
-  width: 95%;
-  height: 30px;
-  border-radius: 30px;
-  background-color: #828383;
+  padding: 8px 0;
+  width: 98%;
+  border-radius: 6px;
+  background-color: white;
+  overflow: auto;
 }
 
 .baseStateCell {
-  width: 33%;
-  height: 30px;
+  width: 240rpx;
   margin-top: 5px;
   float: left;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   font-style: normal;
   font-family: 微软雅黑;
-  color: rgb(247, 247, 247);
+  color: rgb(0, 0, 0);
+  border-right: 6rpx solid #f2f2f2;
+}
+
+.noneRightBorder.baseStateCell {
+  border-right: 0;
 }
 
 .baseStateVerticalLine {
-  width: 1rpx;
-  height: 30px;
+  width: 1px;
+  height: 100px;
   float: left;
-  background-color: #aeb0af;
+  background-color: #f2f2f2;
 }
 
 .lineWrap {
@@ -856,8 +992,12 @@ export default {
   border-bottom: 1px solid #bbb;
 }
 
+.noneRightBorder.styleController {
+  border-right: 0;
+}
+
 .styleController {
-  width: 150rpx;
+  width: 185rpx;
   float: left;
   height: 60px;
   text-align: center;
@@ -866,6 +1006,34 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 30rpx 0;
+  border-bottom: 1px solid #efefef;
+  border-right: 1px solid #efefef;
+}
+
+.baseStateValue {
+  color: rgb(103, 194, 58);
+  font-size: 28px;
+  font-weight: 700;
+  font-style: normal;
+  font-family: 微软雅黑;
+}
+
+.useLogo {
+  float: left;
+}
+
+.useLogo img {
+  width: 42px;
+  height: 42px;
+}
+
+.useContent {
+  float: left;
+  font-size: 15px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(51, 51, 51);
 }
 
 </style>

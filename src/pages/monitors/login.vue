@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="title"><img src="/static/images/lrh_a/logo.jpg" /></div>
+    <div class="title"><img src="/static/images/lrh_a/logo.png" /></div>
     <div class="titleText">小猪微助手</div>
     <div class="inputDiv">
       <div class="inputLeftImg">
@@ -90,6 +90,7 @@ export default {
       let data = await userLogin({ userName: this.username, password: this.password })
       // let data = await userLogin()
       if (data.Result.ReturnFlag._text == '0' && data.Result.ReturnMsg._text == "success") {
+        wx.setStorageSync('RECENT_GATEWAYS', 0)
         wx.reLaunch({
           url: '/pages/index'
         })
@@ -112,13 +113,14 @@ export default {
 </script>
 <style scoped>
 .container {
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 20rpx 0;
   box-sizing: border-box;
+  background-color: #fff;
 }
 
 .inputDiv {

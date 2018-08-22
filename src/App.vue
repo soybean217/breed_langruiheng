@@ -7,6 +7,12 @@ export default {
     wx.setStorageSync('logs', logs)
 
     console.log('app created and cache logs by setStorageSync')
+  },
+  destroyed() {
+    console.log('destroyed')
+    wx.setStorageSync(LAST_SUCCESS_LOGIN_TICKET, {
+      data: { ticket: "" }
+    })
   }
 }
 
@@ -84,6 +90,24 @@ body {
   }
   100% {
     background: red;
+  }
+}
+
+.indexWarn {
+  background: white;
+  animation: roomBlink 3s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes roomBlink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

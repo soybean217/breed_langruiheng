@@ -4,6 +4,11 @@ module.exports = [{
     navigationBarTitleText: '栏舍状态总览'
   }
 }, {
+  path: '/pages/empty',
+  config: {
+    navigationBarTitleText: '加载中'
+  }
+}, {
   path: '/pages/monitors/farmList',
   config: {
     navigationBarTitleText: '监控列表'
@@ -41,7 +46,8 @@ module.exports = [{
 }, {
   path: '/pages/monitors/roomDetail',
   config: {
-    navigationBarTitleText: '栏舍详情'
+    navigationBarTitleText: '栏舍详情',
+    enablePullDownRefresh: true,
   }
 }, {
   path: '/pages/monitors/warnList',

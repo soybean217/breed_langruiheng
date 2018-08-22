@@ -1,75 +1,12 @@
 <template>
   <div class="container">
-    <div class="r1">
-      <div class="r1Left">
-        <div class="chartArea">健康情况分布</div>
-        <mpvue-echarts :echarts="echarts" :onInit="onInit" canvasId="index-pie" />
-      </div>
-      <div class="r1Right">
-        <div class="statCell">
-          <div class="roomsTitle">
-            <div class="roomsTitleLeft">栏舍总数</div>
-            <div class="roomsTitleLeft bigFontRoom colorRoomGreen">{{totalRoomCount}}</div>
-          </div>
-          <div class='rightLogo'><img src="/static/images/lrh_a/home_blue.png"></div>
-        </div>
-        <div class="statCell">
-          <div class="roomsTitle">
-            <div class="roomsTitleLeft">正常数量</div>
-            <div class="roomsTitleLeft bigFontRoom colorRoomGreen">{{normalRoomCount}}</div>
-          </div>
-          <div class='rightLogo'><img src="/static/images/lrh_a/ok_green.png"></div>
-        </div>
-      </div>
-    </div>
-    <div class="r2">
-      <div class="r2Left">
-        <div class="statCell" @click='goWarnRoomList'>
-          <div class="roomsTitle">
-            <div class="roomsTitleLeft">报警数量</div>
-            <div class="roomsTitleLeft bigFontRoom colorRoomRed">{{alarmRoomCount}}</div>
-          </div>
-          <div class='rightLogo'><img v-bind:class='{indexWarn:alarmRoomCount>0}' src="/static/images/lrh_a/alarm_red.png"></div>
-        </div>
-      </div>
-      <div class="r1Right">
-        <div class="statCell">
-          <div class="roomsTitle">
-            <div class="roomsTitleLeft">离线数量</div>
-            <div class="roomsTitleLeft bigFontRoom colorRoomGray">{{offlineRoomCount}}</div>
-          </div>
-          <div class='rightLogo'><img src="/static/images/lrh_a/warn_gray.png"></div>
-        </div>
-      </div>
-    </div>
-    <div class="rRecentTitle">
-      <div class="leftImg">
-        <img src="/static/images/lrh_a/last_green.png">
-      </div>
-      <div class="rightContent">最近浏览栏舍</div>
-    </div>
-    <div class="rRecent" v-if="recentInfo">
-      <room-item v-for="(gateway,i1) in recentInfo.gateways" :key="gateway._attributes.Id" :room="gateway"></room-item>
-    </div>
-    <!-- <div class="divB1"> -->
-    <!--
-    <div @click="goWarnMsgList('1')" class="exception">昨日警报
-      <br><span class="boldNumber">{{remindCount['1']}}</span></div>
-    <div @click="goWarnMsgList('2')" class="exception">日常事务
-      <br><span class="boldNumber">{{remindCount['2']}}</span></div>
-    <div @click="goWarnMsgList('3')" class="exception">设备到期
-      <br><span class="boldNumber">{{remindCount['3']}}</span></div>
-    <div @click="goWarnMsgList('4')" class="exception">参数修改
-      <br><span class="boldNumber">{{remindCount['4']}}</span></div>
-    -->
-    <!-- </div> -->
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import mpvueEcharts from 'mpvue-echarts'
 import { getStorage, setStorage } from '@/utils/wechat'
-import { getAlarmInfo, getRemindInfo, formatArray, syncGatewaysConfig, gatewayDetail, redirectToRoomDetail, detailValueFormat } from '@/utils/api'
+import { getAlarmInfo, getRemindInfo, formatArray, syncGatewaysConfig, gatewayDetail, redirectToRoomDetail, detailValueFormat, loginWithCache } from '@/utils/api'
 import roomItem from '@/components/roomListItem'
 const WARN_GATEWAY_LIST = 'WARN_GATEWAY_LIST'
 const GATEWAY_CONFIG_PREFIX = 'GC_'
@@ -343,14 +280,14 @@ export default {
   },
   mounted() {
     // console.log('mounted')
-    this.getInitData()
-    this.needReload = true
   },
-  onShow() {
-    console.log('onShow')
-    if (this.needReload) {
-      this.getInitData()
-    }
+  async onShow() {
+    console.log('empty a')
+    wx.showLoading({
+      title: '加载中',
+    })
+    let a = await loginWithCache()
+
 
     // chartPie.on("mousedown", function(params) {
     //   console.log('mousedown', params)

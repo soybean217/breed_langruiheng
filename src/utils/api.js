@@ -49,6 +49,9 @@ export function formatArray(target) {
     return result
   }
 }
+export async function loginWithCache() {
+  return await _loginWithCache()
+}
 
 export async function hourData({ machineId = '' } = {}) {
   let ticket = getLastSuccessTicket()
@@ -112,7 +115,7 @@ export async function getRemindInfo() {
 //     return data
 //   } else if (check == 2) {
 //     console.log('ticket overdue')
-//     let r = await loginWithCache()
+//     let r = await _loginWithCache()
 //   }
 // }
 export async function gatewayDetail({ gatewayId = '' } = {}) {
@@ -313,6 +316,9 @@ async function initGatewaysConfig() {
   console.log('initGatewaysConfig saved')
 }
 async function getGatewayConfig({ gatewayId = '' } = {}) {
+  // wx.showLoading({
+  //   title: '加载中',
+  // })
   console.log('gatewayId', gatewayId)
   let ticket = getLastSuccessTicket()
   let params = {}
@@ -326,6 +332,7 @@ async function getGatewayConfig({ gatewayId = '' } = {}) {
   } catch (e) {
     console.log(e)
   }
+  // wx.hideLoading()
   return data.Result.Gateway
 }
 
@@ -334,7 +341,7 @@ function checkResponse(data) {
     return 1
   } else if (data.Result.ReturnFlag._text == '2' && data.Result.ReturnMsg._text == "ticket overdue") {
     console.log('checkResponse', getCurrentPages())
-    loginWithCache()
+    _loginWithCache()
     return 2
   }
 }
@@ -366,32 +373,33 @@ function getLastSuccessTicket() {
     if (value) {
       return value
     } else {
-      loginWithCache()
+      _loginWithCache()
     }
   } catch (e) {
     console.log('getLastSuccessTicket catch', e)
-    loginWithCache()
+    _loginWithCache()
   }
 }
 
 
-async function loginWithCache() {
+async function _loginWithCache() {
   try {
     let value = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
-    console.log('loginWithCache', value)
+    console.log('_loginWithCache', value)
     if (value) {
       let data = await login({ userName: value.userName, password: value.password })
-      let pages = getCurrentPages()
-      wx.reLaunch({
-        url: '/' + pages[pages.length - 1].route
-      })
+      // let pages = getCurrentPages()
+      // wx.reLaunch({
+      //   url: '/' + pages[pages.length - 1].route
+      // })
+      wx.switchTab({ url: '/pages/index' })
     } else {
       wx.redirectTo({ url: '/pages/monitors/login' })
     }
   } catch (e) {
-    console.log('loginWithCache catch', e)
+    console.log('_loginWithCache catch', e)
   }
-  return result
+  return data
 }
 
 // { userName = '测试账户', password = '888888' } = {}
@@ -422,6 +430,7 @@ async function login({ userName = '', password = '' } = {}) {
         }
       })
       console.log('login success')
+      wx.switchTab({ url: '/pages/index' })
       return data
     } else {
       wx.showModal({

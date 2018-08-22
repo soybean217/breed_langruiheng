@@ -31,7 +31,7 @@
         <div class="monitorLeft">{{detail.name}}
           <br>{{detail.unite}}
         </div>
-        <div class="monitorRight" v-bind:class="{red:'colorError'==detail.style,yellow:'colorWarn'==detail.style,text:'colorWarn'==detail.style||'colorError'==detail.style||detail.name=='风量'}">{{detail.oriValue}}</div>
+        <div class="monitorRight" v-bind:class="{red:'colorError'==detail.style,yellow:'colorWarn'==detail.style,text:'colorWarn'==detail.style||'colorError'==detail.style||(detail.name=='风量'&&detail.oriValue.length>=5)}">{{detail.oriValue}}</div>
         <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
       </div>
     </div>
@@ -74,7 +74,7 @@
         </div>
         <div v-else class="dataValue" v-bind:class="detail.style">{{detail.value}}</div>
         <div class="styleControllerTitle">{{detail.name}}</div>
-        <div class="styleControllerValue">{{detail.value}}</div>
+        <div class="styleControllerValue">{{detail.value}}&emsp;</div>
       </div>
     </div>
   </div>
@@ -170,6 +170,18 @@ export default {
     }
   },
   methods: {
+    clearCache() {
+      this.details = []
+      this.controllerDetails = []
+      this.status = {}
+      this.selectedHour = ''
+      this.timeType = 'hour'
+      this.addtionParas = []
+      this.state = {}
+      this.online = true
+      this.use = {}
+      this.chartTitle = '小时数据'
+    },
     computeColorClass(text) {
       if (text == '异常') {
         return 'colorError'
@@ -493,6 +505,7 @@ export default {
       let addParaDetails = []
       let controllerDetails = []
       let addtionParas = []
+      this.use = {}
       if (gw.Result.SensorDatas.Sensor) {
         gw.Result.SensorDatas.Sensor = formatArray(gw.Result.SensorDatas.Sensor)
         for (let sensor of gw.Result.SensorDatas.Sensor) {
@@ -688,7 +701,16 @@ export default {
     this.timeType = 'hour'
   },
   onUnload() {
+    this.clearCache()
     console.log('onUnload')
+  },
+  onHide() {
+    console.log('onUnload')
+  },
+  onPullDownRefresh() {
+    console.log('onPullDownRefresh')
+    this.getInitData()
+    wx.stopPullDownRefresh()
   },
   mounted() {
     this.getInitData()
@@ -786,8 +808,8 @@ export default {
 
 .monitor {
   float: left;
-  margin: 0 30rpx;
-  width: 310rpx;
+  margin: 0 40rpx;
+  width: 290rpx;
   text-align: center;
   display: flex;
   justify-content: space-between;
@@ -879,6 +901,7 @@ export default {
 
 .styleControllerValue {
   width: 60%;
+  height: 14px;
   text-align: right;
   font-size: 12px;
   font-weight: 400;

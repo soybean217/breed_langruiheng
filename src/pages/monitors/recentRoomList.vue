@@ -24,7 +24,9 @@ const WARN_GATEWAY_LIST = 'WARN_GATEWAY_LIST'
 const GATEWAY_CONFIG_PREFIX = 'GC_'
 const CURRENT_GATEWAY = 'CURRENT_GATEWAY'
 const RECENT_GATEWAYS = 'RECENT_GATEWAYS'
-const DETAIL_LIMIT = 4
+const DETAIL_LIMIT = 3
+
+
 export default {
   data() {
     return {

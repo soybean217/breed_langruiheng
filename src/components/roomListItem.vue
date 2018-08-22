@@ -19,7 +19,9 @@ export default {
   },
   methods: {
     toRoomDetail(gateway) {
-      redirectToRoomDetail(gateway._attributes.Id)
+      if (gateway.details[0] != "设备离线") {
+        redirectToRoomDetail(gateway._attributes.Id)
+      }
     },
     procClassBg(gateway) {
       console.log('gateway', gateway)
@@ -99,10 +101,11 @@ export default {
 }
 
 .detailCell {
+  width: 210rpx;
   float: left;
   text-align: center;
   padding-top: 10px;
-  padding-left: 20px;
+  /*padding-left: 20px;*/
 }
 
 </style>

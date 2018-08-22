@@ -4,6 +4,7 @@
       <div class="indexTitleUserLeft"><img src="/static/images/lrh_a/custon_blue.png"></div>
       <div class="indexTitleUserRight"> 当前用户
         <br><span class="currentUser">{{username}}</span></div>
+      <div class="version">版本号：1.0</div>
     </div>
     <div class="column_box" @click='goLogin'>
       <div class="column_img"><img src="/static/images/lrh_a/cpeople_green.png"></div>
@@ -185,6 +186,22 @@ body {
   font-style: normal;
   font-family: 微软雅黑;
   color: rgb(0, 0, 0);
+}
+
+.version {
+  clear: both;
+  float: right;
+  width: 300rpx;
+  height: 20px;
+  font-size: 32rpx;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 微软雅黑;
+  color: rgb(0, 0, 0);
+  text-align: right;
+  display: table-cell;
+  vertical-align: bottom;
+  padding-top: 40px;
 }
 
 </style>

@@ -1,5 +1,11 @@
 <template>
   <div class="container">
+    <!-- <div class="inputDivTitle">
+      <div class="titleLeftImg">
+        <img src="/static/images/lrh_a/logo.png">
+      </div>
+      <div class="titleText">小猪微助手</div>
+    </div> -->
     <div class="title"><img src="/static/images/lrh_a/logo.png" /></div>
     <div class="titleText">小猪微助手</div>
     <div class="inputDiv">
@@ -122,7 +128,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
   padding: 20rpx 0;
   box-sizing: border-box;
   background-color: #fff;
@@ -133,10 +139,24 @@ export default {
   width: 80%;
   padding: 5px 12px;
   padding-left: 0;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
+  /*padding-bottom: 10px;
+  margin-bottom: 5px;*/
   border-bottom: 1px solid #ccc;
   border-radius: 5rpx;
+}
+
+.inputDivTitle {
+  overflow: auto;
+  display: block;
+  width: 60%;
+  padding: 5px 12px;
+  padding-left: 0;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  border-radius: 5rpx;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .inputArea {
@@ -148,6 +168,17 @@ export default {
   padding-top: 6px;
   padding-left: 4px;
   float: left;
+}
+
+.titleLeftImg {
+  padding-top: 6px;
+  padding-left: 4px;
+  float: left;
+}
+
+.titleLeftImg img {
+  width: 40px;
+  height: 40px;
 }
 
 .inputLeftImg img {
@@ -170,22 +201,25 @@ export default {
   text-align: center;
 }
 
+.title img {
+  width: 40px;
+  height: 40px;
+}
+
 .titleText {
-  padding-bottom: 24px;
+  /*padding-bottom: 24px;*/
+  padding-top: 5px;
   width: 100%;
   white-space: nowrap;
   text-align: center;
   color: rgb(51, 51, 51);
-  font-size: 36px;
+  font-size: 28px;
   font-style: normal;
   text-decoration: none;
-  font-family: 楷体;
+  font-family: 黑体;
 }
 
-.title img {
-  width: 150px;
-  height: 150px;
-}
+
 
 .modifyLink {
   width: 80%;

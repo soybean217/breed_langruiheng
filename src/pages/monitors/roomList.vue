@@ -23,7 +23,7 @@ import roomItem from '@/components/roomListItem'
 const GATEWAY_LIST_FOR_LAST_FARM = 'GATEWAY_LIST_FOR_LAST_FARM'
 const GATEWAY_CONFIG_PREFIX = 'GC_'
 const CURRENT_GATEWAY = 'CURRENT_GATEWAY'
-const DETAIL_LIMIT = 4
+const DETAIL_LIMIT = 3
 export default {
   data() {
     return {

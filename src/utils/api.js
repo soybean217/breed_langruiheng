@@ -41,6 +41,10 @@ export function getWarnTypeNameById(typeId) {
   }
 }
 export function formatArray(target) {
+  return _formatArray(target)
+}
+
+function _formatArray(target) {
   if (Array.isArray(target)) {
     return target
   } else {
@@ -381,7 +385,9 @@ function getLastSuccessTicket() {
   }
 }
 
-
+function redirectToLogin() {
+  wx.redirectTo({ url: '/pages/monitors/login' })
+}
 async function _loginWithCache() {
   try {
     let value = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
@@ -394,7 +400,13 @@ async function _loginWithCache() {
       // })
       wx.switchTab({ url: '/pages/index' })
     } else {
-      wx.redirectTo({ url: '/pages/monitors/login' })
+      // setTimeout(redirectToLogin, 1000)
+      let pages = getCurrentPages()
+      console.log(pages[pages.length - 1].route)
+      if (pages[pages.length - 1].route != 'pages/monitors/login') {
+        wx.redirectTo({ url: '/pages/monitors/login' })
+      }
+      wx.hideLoading()
     }
   } catch (e) {
     console.log('_loginWithCache catch', e)
@@ -423,6 +435,7 @@ async function login({ userName = '', password = '' } = {}) {
       function asyncConfig(callback) {
         callback.call()
       }
+      data.Result.Gateways.Gateway = _formatArray(data.Result.Gateways.Gateway)
       asyncConfig(function() {
         console.log('data', data)
         for (var gateway of data.Result.Gateways.Gateway) {

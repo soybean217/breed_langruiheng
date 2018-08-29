@@ -9,6 +9,11 @@ module.exports = [{
     navigationBarTitleText: '加载中'
   }
 }, {
+  path: '/pages/monitors/testForIp6',
+  config: {
+    navigationBarTitleText: 'IP6测试'
+  }
+}, {
   path: '/pages/monitors/farmList',
   config: {
     navigationBarTitleText: '监控列表'

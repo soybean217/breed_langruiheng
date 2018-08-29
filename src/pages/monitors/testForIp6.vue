@@ -6,38 +6,7 @@
       </div>
       <div class="titleText">小猪微助手</div>
     </div> -->
-    <div class="title"><img src="/static/images/lrh_a/logo.png" /></div>
-    <div class="titleText">小猪微助手</div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/people_blue.png">
-      </div>
-      <div class="inputArea">
-        <input type="text" class="formControl" v-model="username" placeholder="输入用户名" />
-      </div>
-    </div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/lock_blue.png">
-      </div>
-      <div class="inputArea">
-        <input type="password" class="formControl" v-model="password" placeholder="输入密码" />
-      </div>
-    </div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/computer_blue.png">
-      </div>
-      <div class="inputArea">
-        <input type="text" class="formControl" v-model="server" placeholder="输入服务器域名" />
-      </div>
-    </div>
-    <div class="empty"></div>
-    <span @click="login" class="bigBtn">登  陆</span>
-    <br>
-    <div class="modifyLink">
-      <!-- <a href='/pages/monitors/serverEdit'>修改服务器地址</a> -->
-    </div>
+    <div class="title">{{currentState}}</div>
   </div>
 </template>
 <script>
@@ -53,6 +22,7 @@ export default {
   data() {
     return {
       username: '',
+      currentState: 'abc',
       password: '',
       server: wx.getStorageSync('SERVER_HOST').replace('https://', ''),
     }
@@ -107,20 +77,31 @@ export default {
       }
     }
   },
+  onShow() {
+    this.currentState = ' onshow '
+    console.log('onShow')
+  },
   async mounted() {
-    // wx.showLoading({
-    //   title: '加载中',
-    // })
     // let a = await loginWithCache()
-    // let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
+    let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
     // if (cache) {
+    //   this.currentState = 'cache is true,' + JSON.stringify(cache)
     //   this.username = cache.userName
     //   this.password = cache.password
     // } else {
+    //   this.currentState = 'user cache is false , try to write cache'
+    //   // let ticketCache = await getStorage(LAST_SUCCESS_LOGIN_TICKET)
+    //   let ticketCache = wx.getStorageSync(LAST_SUCCESS_LOGIN_TICKET)
+    //   this.currentState = 'first load ticketCache is ,' + JSON.stringify(ticketCache)
+    //   ticketCache = 'test1234'
+    //   wx.setStorageSync(LAST_SUCCESS_LOGIN_TICKET, ticketCache)
+    //   this.currentState = 'save ticketCache is ,' + ticketCache
+    //   ticketCache = wx.getStorageSync(LAST_SUCCESS_LOGIN_TICKET)
+    //   this.currentState = 'second load ticketCache is ,' + JSON.stringify(ticketCache)
+    //   // wx.redirectTo({ url: '/pages/monitors/login' })
     //   this.username = ''
     //   this.password = ''
     // }
-    // wx.hideLoading()
   }
 }
 

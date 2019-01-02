@@ -25,13 +25,21 @@ https://nodejs.org/en/
 ## 目录说明
 
 build/   webpack配置和build配置(如果没有引入新的组件，一般不用修改)
+
 config/ npm run 的配置(一般不用修改)
+
 dist/   编译输出目录
+
 node_modules/  node的库目录
+
 src/pages/  页面目录(修改页面在这个目录内)
+
 src/components/  页面组件目录(修改组件在这个目录内)
+
 src/utils/  中间件目录(修改和服务器对接数据的处理在api.js文件中)
+
 src/pages.js  加入新的页面需要在这个文件注册
+
 static/ 静态资源(图片)所在目录
 
 

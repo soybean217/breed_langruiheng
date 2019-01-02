@@ -118,6 +118,7 @@ function initChart(canvas, width, height) {
     height: height
   });
   canvas.setChart(chartPie);
+  // chartPie.setOption(option);
   console.log('initChart')
   // chartPie.on("mousedown", function(params) {
   //   console.log('mousedown', params)
@@ -174,77 +175,66 @@ export default {
       }
     },
     async getInitRecentRoomData() {
-      console.log('getInitRecentRoomData')
+      console.log('begin getInitRecentRoomData')
       let data = await getStorage(RECENT_GATEWAYS)
       console.log('RECENT_GATEWAYS', data)
-      this.recentInfo = data.data.data
-      syncGatewaysConfig({ gateways: this.recentInfo.gateways })
-      for (let gateway of this.recentInfo.gateways) {
-        var cache = wx.getStorageSync(GATEWAY_CONFIG_PREFIX + gateway._attributes.Id)
-        gateway._attributes.Name = cache._attributes.Name
-        let gw = await gatewayDetail({ gatewayId: gateway._attributes.Id })
-        if (gw.Result.Alarm) {
-          gateway.Alarm = gw.Result.Alarm
-        }
-        if (gw.Result.OnLine._text == 'Y') {
-          let tmpCount = 0
-          for (let sensor of gw.Result.SensorDatas.Sensor) {
-            if (tmpCount >= DETAIL_LIMIT) {
-              break
-            }
-            // if (parseInt(sensor._attributes.Val) > -600) {
-            for (let sensorConfig of cache.Sensors.Sensor) {
-              if (sensorConfig._attributes.Type == "TEMPERATURE" && sensorConfig._attributes.Id == sensor._attributes.Id) {
-                if (!gateway.details) {
-                  gateway.details = []
-                }
-                gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
-                tmpCount++
-                break
-              }
-            }
-            for (let sensorConfig of cache.Sensors.Sensor) {
-              if (sensorConfig._attributes.Type == "HUMIDITY" && sensorConfig._attributes.Id == sensor._attributes.Id) {
-                if (!gateway.details) {
-                  gateway.details = []
-                }
-                gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
-                tmpCount++
-                break
-              }
-            }
-            // }
+      if (data.data) {
+        //  let tmpRecentInfo = data.data.data
+        this.recentInfo = data.data.data
+        syncGatewaysConfig({ gateways: this.recentInfo.gateways })
+        for (let gateway of this.recentInfo.gateways) {
+          var cache = wx.getStorageSync(GATEWAY_CONFIG_PREFIX + gateway._attributes.Id)
+          gateway._attributes.Name = cache._attributes.Name
+          let gw = await gatewayDetail({ gatewayId: gateway._attributes.Id })
+          if (gw.Result.Alarm) {
+            gateway.Alarm = gw.Result.Alarm
           }
-        } else {
-          gateway.details = []
-          gateway.details.push('设备离线')
+          if (gw.Result.OnLine._text == 'Y') {
+            let tmpCount = 0
+            for (let sensor of gw.Result.SensorDatas.Sensor) {
+              if (tmpCount >= DETAIL_LIMIT) {
+                break
+              }
+              // if (parseInt(sensor._attributes.Val) > -600) {
+              for (let sensorConfig of cache.Sensors.Sensor) {
+                if (sensorConfig._attributes.Type == "TEMPERATURE" && sensorConfig._attributes.Id == sensor._attributes.Id) {
+                  if (!gateway.details) {
+                    gateway.details = []
+                  }
+                  gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
+                  tmpCount++
+                  break
+                }
+              }
+              for (let sensorConfig of cache.Sensors.Sensor) {
+                if (sensorConfig._attributes.Type == "HUMIDITY" && sensorConfig._attributes.Id == sensor._attributes.Id) {
+                  if (!gateway.details) {
+                    gateway.details = []
+                  }
+                  gateway.details.push(sensorConfig._attributes.Name + '<br>' + detailValueFormat({ config: sensorConfig, item: sensor, catalog: 'sensor' }))
+                  tmpCount++
+                  break
+                }
+              }
+              // }
+            }
+          } else {
+            gateway.details = []
+            gateway.details.push('设备离线')
+          }
+          let tmpInfo = this.recentInfo
+          this.recentInfo = {}
+          this.recentInfo = tmpInfo
         }
-
-        let tmpInfo = this.recentInfo
-        this.recentInfo = {}
-        this.recentInfo = tmpInfo
       }
+      console.log('end getInitRecentRoomData')
       wx.hideLoading()
+      this.needReload = true
     },
     async getInitData() {
-      // let remindInfo = await getRemindInfo()
-      // for (let tmp in this.remindCount) {
-      //   this.remindCount[tmp] = 0
-      // }
-      // if (!Array.isArray(remindInfo.Result.Reminds.Remind)) {
-      //   let tmpInfo = remindInfo.Result.Reminds.Remind
-      //   remindInfo.Result.Reminds.Remind = []
-      //   remindInfo.Result.Reminds.Remind.push(tmpInfo)
-      // }
-      // for (let info of remindInfo.Result.Reminds.Remind) {
-      //   if (this.remindCount[info.remind_type._text]) {
-      //     this.remindCount[info.remind_type._text]++
-      //   } else {
-      //     this.remindCount[info.remind_type._text] = 1
-      //   }
-      // }
       this.alartCount = 0
       let data = await getAlarmInfo()
+      console.log('data', data)
       let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
       this.username = cache.userName
       this.normalNumber = Number(data.Result.Alarm._attributes.rate.replace('%', '')).toFixed(0)
@@ -253,7 +243,9 @@ export default {
       this.totalRoomCount = parseInt(data.Result.Alarm._attributes.shackAmt)
       this.normalRoomCount = this.totalRoomCount - this.offlineRoomCount - this.alarmRoomCount
       this.normalRate = Number(100 * this.normalRoomCount / parseInt(data.Result.Alarm._attributes.shackAmt)).toFixed(0) + '%'
+      console.log('data.Result', data.Result)
       if (data.Result.Alarm.Id) {
+        console.log('data.Result.Alarm.Id', data.Result.Alarm.Id)
         data.Result.Alarm.Id = formatArray(data.Result.Alarm.Id)
         this.alartCount = data.Result.Alarm.Id.length
         if (Array.isArray(data.Result.Alarm.Id)) {
@@ -269,6 +261,7 @@ export default {
           })
         }
       }
+      console.log('check1')
       // if (this.normalNumber > 0) {
       option.series[0].data = [{
         value: this.normalRoomCount,
@@ -281,52 +274,21 @@ export default {
         name: '',
       }, ]
       option.series[0].hoverAnimation = false
-      option.series[0].z = 1
-      // option.series[0].legendHoverLink = false
-      // option.series.push({
-      //   data: [{ value: 100 }],
-      //   radius: ['0%', '50%'],
-      //   type: "pie",
-      //   center: ['50%', '45%'],
-      //   label: {
-      //     show: false,
-      //     normal: {
-      //       fontSize: 14
-      //     }
-      //   },
-      //   labelLine: {
-      //     show: false
-      //   },
-      //   hoverAnimation: false,
-      //   z: 10,
-      // })
-      // option.series[1] = 
-      // option.title = {
-      //   text: this.normalRate,
-      //   // subtext: 'From ExcelHome',
-      //   // sublink: 'http://e.weibo.com/1341556070/AhQXtjbqh',
-      //   x: 'center',
-      //   y: '38%',
-      //   itemGap: 20,
-      //   textStyle: {
-      //     color: '#53bc53',
-      //     fontFamily: '微软雅黑',
-      //     fontSize: 14,
-      //     fontWeight: 'bolder'
-      //   },
-      //   z: 20,
-      // }
       option.legend = {
         show: false
       }
       option.grid = {
         top: 0,
       }
-      chartPie.clear()
+      console.log('check2')
+      //chartPie.clear()
+      console.log('check3', option)
       chartPie.setOption(option);
+      console.log('check4')
 
       chartPie.off("mousedown")
       chartPie.off("click")
+      console.log('check5')
       this.getInitRecentRoomData()
 
       /*
@@ -342,16 +304,27 @@ export default {
     },
   },
   mounted() {
-    // console.log('mounted')
-    this.getInitData()
-    this.needReload = true
+    console.log('mounted')
+    let t = this
+    wx.showLoading()
+    setTimeout(function(){
+      t.getInitData();
+    },1000)
+    
+    //console.log('onMounted index this.needReload', this.needReload)
+  },
+  onReady() {
+    console.log('onReady')
+  },
+  updated() {
+    console.log('updated')
   },
   onShow() {
-    console.log('onShow')
+    console.log('onShow index this.needReload', this.needReload)
     if (this.needReload) {
       this.getInitData()
     }
-
+    //this.needReload = true
     // chartPie.on("mousedown", function(params) {
     //   console.log('mousedown', params)
     //   if (params.name == "异常栏舍") {

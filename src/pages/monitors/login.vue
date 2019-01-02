@@ -7,7 +7,7 @@
       <div class="titleText">小猪微助手</div>
     </div> -->
     <div class="title"><img src="/static/images/lrh_a/logo.png" /></div>
-    <div class="titleText">小猪微助手</div>
+    <div class="titleText">农牧微助手</div>
     <div class="inputDiv">
       <div class="inputLeftImg">
         <img src="/static/images/lrh_a/people_blue.png">
@@ -108,19 +108,19 @@ export default {
     }
   },
   async mounted() {
-    // wx.showLoading({
-    //   title: '加载中',
-    // })
+    wx.showLoading({
+      title: '加载中',
+    })
     // let a = await loginWithCache()
-    // let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
-    // if (cache) {
-    //   this.username = cache.userName
-    //   this.password = cache.password
-    // } else {
-    //   this.username = ''
-    //   this.password = ''
-    // }
-    // wx.hideLoading()
+    let cache = wx.getStorageSync(LAST_SUCCESS_LOGIN_INPUT)
+    if (cache) {
+      this.username = cache.userName
+      this.password = cache.password
+    } else {
+      this.username = ''
+      this.password = ''
+    }
+    wx.hideLoading()
   }
 }
 

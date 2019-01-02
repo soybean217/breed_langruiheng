@@ -55,7 +55,7 @@ export default {
         title: '是否注销',
         success: function(res) {
           if (res.confirm) {
-            wx.setStorageSync(LAST_SUCCESS_LOGIN_INPUT, false)
+            // wx.setStorageSync(LAST_SUCCESS_LOGIN_INPUT, false)
             wx.setStorageSync(LAST_SUCCESS_LOGIN_TICKET, false)
             wx.redirectTo({ url: '/pages/monitors/login' })
           }

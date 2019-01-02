@@ -301,6 +301,7 @@ async function cacheGatewayConfig({ gateway = {} } = {}) {
     if (cache) {
       if (gateway._attributes.Version && cache._attributes.Version != gateway._attributes.Version) {
         let tmp = await getGatewayConfig({ gatewayId: gateway._attributes.Id })
+        console.log('cacheGatewayConfig', tmp)
         return tmp
       } else {
         return cache
@@ -357,7 +358,6 @@ async function getFarmList() {
   // let result = await request.post(`/langrh/mobile/mobileFarm!loadFarms.action`, json2Form(params))
   let result = await request.post(`/langrh/mobile/mobileFarm!loadFarms4Level.action`, json2Form(params))
   let data = JSON.parse(convert.xml2json(result, { compact: true }))
-  console.log('farmList', data)
   return data
 }
 async function getGatewayList({ farmId = '' } = {}) {
@@ -435,13 +435,13 @@ async function login({ userName = '', password = '' } = {}) {
       function asyncConfig(callback) {
         callback.call()
       }
-      data.Result.Gateways.Gateway = _formatArray(data.Result.Gateways.Gateway)
-      asyncConfig(function() {
-        console.log('data', data)
-        for (var gateway of data.Result.Gateways.Gateway) {
-          cacheGatewayConfig({ gateway: gateway })
-        }
-      })
+      // data.Result.Gateways.Gateway = _formatArray(data.Result.Gateways.Gateway)
+      // asyncConfig(function() {
+      //   console.log('data', data)
+      //   for (var gateway of data.Result.Gateways.Gateway) {
+      //     cacheGatewayConfig({ gateway: gateway })
+      //   }
+      // })
       console.log('login success')
       wx.switchTab({ url: '/pages/index' })
       return data

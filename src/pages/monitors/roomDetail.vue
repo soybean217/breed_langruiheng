@@ -390,6 +390,7 @@ export default {
       let app = this
       chart.on("mousedown", function(params) {
         console.log('mousedown', params)
+        chart.clear()
         app.selectedHour = params.name
         app.minDataMachine()
       });
@@ -403,7 +404,6 @@ export default {
         if (sensor.isSelected) {
           let data = await minData({ machineId: sensor.config._attributes.Id, hour: this.selectedHour })
           let chartData = this.procChartData(data.Result.Datas._text)
-          console.log('chartData', chartData)
           option.legend.data.push(sensor.name)
           option.series.push({
             name: sensor.name,
@@ -453,6 +453,7 @@ export default {
       let app = this
       chart.on("mousedown", function(params) {
         console.log('mousedown', params)
+        chart.clear()
         app.hourDataMachine()
       });
     },
@@ -635,6 +636,7 @@ export default {
         }
       }
       wx.setStorageSync(RECENT_GATEWAYS, recentGateways)
+      wx.hideLoading()
     },
     sortDetails(oriDetails) {
       let result = []
@@ -713,7 +715,12 @@ export default {
     wx.stopPullDownRefresh()
   },
   mounted() {
-    this.getInitData()
+    let t = this
+    wx.showLoading()
+    setTimeout(function(){
+      t.getInitData();
+    },1000) 
+    // this.getInitData()
   }
 }
 
@@ -873,7 +880,7 @@ export default {
 }
 
 .echarts-wrap {
-  width: 750rpx;
+  width: 100%;
   height: 375rpx;
   background-color: #f2f4f5;
 }

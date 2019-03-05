@@ -422,6 +422,7 @@ async function login({ userName = '', password = '' } = {}) {
   params.Password = md5(password)
   try {
     let result = await request.post(`/langrh/mobile/mobile!login.action`, json2Form(params))
+    console.log(result)
     let data = JSON.parse(convert.xml2json(result, { compact: true }))
     if (data.Result.ReturnFlag._text == '0' && data.Result.ReturnMsg._text == "success") {
       await setStorage(LAST_SUCCESS_LOGIN_TICKET, {

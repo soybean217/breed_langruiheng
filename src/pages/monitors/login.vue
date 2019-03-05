@@ -7,38 +7,38 @@
       <div class="titleText">小猪微助手</div>
     </div> -->
     <div class="title"><img src="/static/images/lrh_a/logo.png" /></div>
-    <div class="titleText">农牧微助手</div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/people_blue.png">
+      <div class="titleText">农牧微助手</div>
+      <div class="inputDiv">
+        <div class="inputLeftImg">
+          <img src="/static/images/lrh_a/people_blue.png">
       </div>
-      <div class="inputArea">
-        <input type="text" class="formControl" v-model="username" placeholder="输入用户名" />
+          <div class="inputArea">
+            <input type="text" class="formControl" v-model="username" placeholder="输入用户名" />
+          </div>
+        </div>
+        <div class="inputDiv">
+          <div class="inputLeftImg">
+            <img src="/static/images/lrh_a/lock_blue.png">
       </div>
-    </div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/lock_blue.png">
+            <div class="inputArea">
+              <input type="password" class="formControl" v-model="password" placeholder="输入密码" />
+            </div>
+          </div>
+          <div class="inputDiv">
+            <div class="inputLeftImg">
+              <img src="/static/images/lrh_a/computer_blue.png">
       </div>
-      <div class="inputArea">
-        <input type="password" class="formControl" v-model="password" placeholder="输入密码" />
-      </div>
-    </div>
-    <div class="inputDiv">
-      <div class="inputLeftImg">
-        <img src="/static/images/lrh_a/computer_blue.png">
-      </div>
-      <div class="inputArea">
-        <input type="text" class="formControl" v-model="server" placeholder="输入服务器域名" />
-      </div>
-    </div>
-    <div class="empty"></div>
-    <span @click="login" class="bigBtn">登  陆</span>
-    <br>
-    <div class="modifyLink">
-      <!-- <a href='/pages/monitors/serverEdit'>修改服务器地址</a> -->
-    </div>
-  </div>
+              <div class="inputArea">
+                <input type="text" class="formControl" v-model="server" placeholder="输入服务器域名" />
+              </div>
+            </div>
+            <div class="empty"></div>
+            <span @click="login" class="bigBtn">登  陆</span>
+            <br>
+            <div class="modifyLink">
+              <!-- <a href='/pages/monitors/serverEdit'>修改服务器地址</a> -->
+            </div>
+          </div>
 </template>
 <script>
 import { getStorage, setStorage } from '@/utils/wechat'
@@ -98,6 +98,7 @@ export default {
       }
       console.log("wx.getStorageSync('SERVER_HOST')", wx.getStorageSync('SERVER_HOST'))
       let data = await userLogin({ userName: this.username, password: this.password })
+      console.log('login data:', this.username, data)
       // let data = await userLogin()
       if (data.Result.ReturnFlag._text == '0' && data.Result.ReturnMsg._text == "success") {
         wx.setStorageSync('RECENT_GATEWAYS', 0)

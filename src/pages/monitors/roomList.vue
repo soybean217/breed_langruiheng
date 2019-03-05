@@ -84,7 +84,10 @@ export default {
                 break
               }
             }
-            // }
+            if (!gateway.details) {
+              gateway.details = []
+              gateway.details.push('没有温湿度设备')
+            }
           }
         } else {
           gateway.details = []

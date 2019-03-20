@@ -3,13 +3,22 @@
     <div class="leftLogoArea" v-bind:class='{warnBg:room.Alarm,offlineBg:room.details && room.details[0] == "设备离线"}'>
       <img src='/static/images/lrh_a/home_white.png'>
     </div>
-    <div class='rightArea'>
-      <div class='roomName'>{{room._attributes.Name}}</div>
-      <div class='dataArea'>
-        <div v-for="(detail,i2) in room.details" class="detailCell" :key="i2" v-html='detail'></div>
+      <div class='rightArea'>
+        <div class="justify" style="width:100%;border-bottom: 1rpx solid #cdcdcd;">
+          <div class='roomName'>
+            {{room._attributes.Name}}
+          </div>
+          <block v-if="room.details && room.details[0] != '设备离线'">
+            <div v-if="room.Alarm" style="font-size: 14px;  font-weight: 400;  font-style: normal;  font-family: 微软雅黑;  color: red;padding-top:5px">
+              {{room.Alarm._text}}
+            </div>
+          </block>
+        </div>
+        <div class='dataArea'>
+          <div v-for="(detail,i2) in room.details" class="detailCell" :key="i2" v-html='detail'></div>
+        </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import { redirectToRoomDetail } from '@/utils/api'
@@ -40,6 +49,11 @@ export default {
 
 </script>
 <style>
+.justify {
+  display: flex;
+  justify-content: space-between;
+}
+
 .roomItemRow {
   overflow: auto;
   clear: both;
@@ -80,7 +94,7 @@ export default {
   font-style: normal;
   font-family: 楷体;
   color: rgb(51, 51, 51);
-  border-bottom: 1rpx solid #cdcdcd;
+  /*border-bottom: 1rpx solid #cdcdcd;*/
 }
 
 .rightArea {

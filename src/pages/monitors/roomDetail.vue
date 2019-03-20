@@ -36,48 +36,61 @@
       </div>
     </div>
     <div class="baseState">
-      <block v-if='use.DRINK'>
-        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.DRINK.isSelected }" @click='selectMachine(use.DRINK)'>
-          <div class="useLogo">
-            <img src="/static/images/lrh_a/water.png">
+      <div class="baseStateCell" v-if="detail2.config._attributes.Type=='DRINK'||detail2.config._attributes.Type=='AMMETER'||detail2.config._attributes.Type=='FORAGE'" v-for="(detail2,i2) in details" :key='i2' v-bind:class="{ monitorSelected: detail2.isSelected }" @click='selectMachine(detail2)'>
+        <div class="useLogo">
+          <img v-if="detail2.config._attributes.Type=='DRINK'" src="/static/images/lrh_a/water.png">
+          <img v-if="detail2.config._attributes.Type=='AMMETER'" src="/static/images/lrh_a/degree.png">
+          <img v-if="detail2.config._attributes.Type=='FORAGE'" src="/static/images/lrh_a/forage.png">
           </div>
-          <div class="useContent">饮水量
-            <br>{{use.DRINK.value}}</div>
-        </div>
-      </block>
-      <block v-if='use.AMMETER'>
-        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.AMMETER.isSelected }" @click='selectMachine(use.AMMETER)'>
-          <div class="useLogo">
-            <img src="/static/images/lrh_a/degree.png">
+          <div class="useContent">
+            {{detail2.name}}
+            <br>{{detail2.oriValue}}
           </div>
-          <div class="useContent">用电量
-            <br>{{use.AMMETER.value}}</div>
         </div>
-      </block>
-      <block v-if='use.FORAGE'>
-        <div class="baseStateCell" v-bind:class="{ monitorSelected: use.FORAGE.isSelected,noneRightBorder:true }" @click='selectMachine(use.FORAGE)'>
-          <div class="useLogo">
-            <img src="/static/images/lrh_a/forage.png">
+      </div>
+      <!-- <div class="baseState">
+        <block v-if='use.DRINK'>
+          <div class="baseStateCell" v-bind:class="{ monitorSelected: use.DRINK.isSelected }" @click='selectMachine(use.DRINK)'>
+            <div class="useLogo">
+              <img src="/static/images/lrh_a/water.png">
           </div>
-          <div class="useContent">耗料量
-            <br>{{use.FORAGE.value}}</div>
+              <div class="useContent">饮水量
+                <br>{{use.DRINK.value}}</div>
+            </div>
+        </block>
+        <block v-if='use.AMMETER'>
+          <div class="baseStateCell" v-bind:class="{ monitorSelected: use.AMMETER.isSelected }" @click='selectMachine(use.AMMETER)'>
+            <div class="useLogo">
+              <img src="/static/images/lrh_a/degree.png">
+          </div>
+              <div class="useContent">用电量
+                <br>{{use.AMMETER.value}}</div>
+            </div>
+        </block>
+        <block v-if='use.FORAGE'>
+          <div class="baseStateCell" v-bind:class="{ monitorSelected: use.FORAGE.isSelected,noneRightBorder:true }" @click='selectMachine(use.FORAGE)'>
+            <div class="useLogo">
+              <img src="/static/images/lrh_a/forage.png">
+          </div>
+              <div class="useContent">耗料量
+                <br>{{use.FORAGE.value}}</div>
+            </div>
+        </block>
+      </div> -->
+      <div class="controllersWrap">
+        <div class="styleController" v-for="(detail,i2) in controllerDetails" v-bind:class='{noneRightBorder:i2%4==3}' :key='i1'>
+          <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
+          <div v-if="detail.icon" class="imgIconDiv">
+            <img :src='detail.icon' class="imgIcon" />
+            <!-- <div class="desc">{{detail.value}}</div> -->
+            <!-- <span class="smallByIcon">{{detail.value}}</span> -->
+          </div>
+          <div v-else class="dataValue" v-bind:class="detail.style">{{detail.value}}</div>
+          <div class="styleControllerTitle">{{detail.name}}</div>
+          <div class="styleControllerValue">{{detail.value}}&emsp;</div>
         </div>
-      </block>
-    </div>
-    <div class="controllersWrap">
-      <div class="styleController" v-for="(detail,i2) in controllerDetails" v-bind:class='{noneRightBorder:i2%4==3}' :key='i1'>
-        <!-- <div v-if="detail.icon" :style="'background:url('+detail.icon+');background-size: contain;'" class="imgIcon"> -->
-        <div v-if="detail.icon" class="imgIconDiv">
-          <img :src='detail.icon' class="imgIcon" />
-          <!-- <div class="desc">{{detail.value}}</div> -->
-          <!-- <span class="smallByIcon">{{detail.value}}</span> -->
-        </div>
-        <div v-else class="dataValue" v-bind:class="detail.style">{{detail.value}}</div>
-        <div class="styleControllerTitle">{{detail.name}}</div>
-        <div class="styleControllerValue">{{detail.value}}&emsp;</div>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import echarts from 'echarts'
@@ -389,7 +402,7 @@ export default {
       chart.off("mousedown");
       let app = this
       chart.on("mousedown", function(params) {
-        console.log('mousedown', params)
+        // console.log('mousedown', params)
         chart.clear()
         app.selectedHour = params.name
         app.minDataMachine()
@@ -452,7 +465,7 @@ export default {
       chart.off("mousedown");
       let app = this
       chart.on("mousedown", function(params) {
-        console.log('mousedown', params)
+        // console.log('mousedown', params)
         chart.clear()
         app.hourDataMachine()
       });
@@ -514,6 +527,7 @@ export default {
             if (sensorConfig._attributes.Id == sensor._attributes.Id) {
               let addParaDetail = false
               if (sensorConfig.Params && sensor.Params) {
+                // console.log('sensorConfig', sensorConfig)
                 sensorConfig.Params.Param = formatArray(sensorConfig.Params.Param)
                 sensor.Params.Param = formatArray(sensor.Params.Param)
                 for (let sc of sensorConfig.Params.Param) {
@@ -699,7 +713,7 @@ export default {
     },
   },
   onShow() {
-    console.log('onShow')
+    // console.log('onShow')
     this.timeType = 'hour'
   },
   onUnload() {
@@ -717,9 +731,9 @@ export default {
   mounted() {
     let t = this
     wx.showLoading()
-    setTimeout(function(){
+    setTimeout(function() {
       t.getInitData();
-    },1000) 
+    }, 1000)
     // this.getInitData()
   }
 }
